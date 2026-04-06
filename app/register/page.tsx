@@ -9,6 +9,8 @@ import {
   signUpLocalUser,
 } from "../../lib/local-auth";
 
+import { Footer } from "../../components/layout/Footer";
+
 type AuthMode = "sign-in" | "sign-up";
 
 const initialFormState = {
@@ -294,9 +296,11 @@ export default function RegisterPage() {
           </button>
         </div>
 
-        <div className="mt-auto pt-12 text-center text-[10px] font-medium uppercase tracking-[0.14em] text-on-surface-variant/60">
-          © 2024 VoteLens Nigeria • Public Service Infrastructure
-        </div>
+        <Footer
+          branding={{ name: "VoteLens", tagline: "Nigeria" }}
+          links={[]}
+          copyright="© 2024 VoteLens Nigeria • Public Service Infrastructure"
+        />
       </div>
 
       {/* Floating Support - Hidden on small mobile */}

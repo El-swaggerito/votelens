@@ -5,9 +5,12 @@ import Link from "next/link";
 import { useState } from "react";
 import {
   clearStoredSession,
+  getInitials,
   getStoredSession,
   type LocalSession,
 } from "../lib/local-auth";
+import { Navbar } from "../components/layout/Navbar";
+import { Footer } from "../components/layout/Footer";
 
 const featureCards = [
   {
@@ -98,6 +101,33 @@ export default function Home() {
 
   return (
     <div className="flex-1 bg-surface text-on-surface">
+      <Navbar
+        branding={{ name: "VoteLens" }}
+        showSearch={false}
+        rightContent={
+          session ? (
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 min-w-9 items-center justify-center rounded-full bg-primary px-2 text-xs font-bold tracking-[0.14em] text-on-primary">
+                {getInitials(session.fullName)}
+              </div>
+              <button
+                className="rounded-full bg-surface-container-low px-4 py-2 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container-high"
+                onClick={handleSignOut}
+                type="button"
+              >
+                Sign out
+              </button>
+            </div>
+          ) : (
+            <Link
+              className="rounded-full bg-surface-container-low px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-surface-container-high"
+              href="/register"
+            >
+              Sign in
+            </Link>
+          )
+        }
+      />
       <main>
         <section className="relative overflow-hidden px-6 pb-20 pt-12 sm:px-8 lg:pb-32 lg:pt-24">
           <div className="absolute inset-0 bg-[linear-gradient(135deg,rgb(0_107_63_/_0.05),transparent_45%,rgb(40_135_49_/_0.05))]" />
@@ -391,42 +421,16 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="mt-auto border-t border-outline-variant/10 bg-surface-container-lowest px-6 py-12 sm:px-8">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-center space-y-8">
-          <div className="flex items-center gap-2">
-            <span className="font-display text-2xl font-black text-primary">
-              VoteLens
-            </span>
-            <span className="border-l border-outline-variant/30 px-2 text-sm font-light text-on-surface-variant">
-              Nigeria
-            </span>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-sm font-medium text-on-surface-variant">
-            {["Privacy Policy", "Terms of Service", "INEC Portal", "Contact Us"].map(
-              (item) => (
-                <a
-                  key={item}
-                  className={`transition-colors hover:text-primary ${
-                    item === "INEC Portal"
-                      ? "text-primary underline underline-offset-4"
-                      : ""
-                  }`}
-                  href="#"
-                >
-                  {item}
-                </a>
-              ),
-            )}
-          </div>
-
-          <div className="w-full border-t border-outline-variant/10 pt-8 text-center">
-            <p className="text-xs text-on-surface-variant tracking-wide">
-              © 2024 VoteLens Nigeria. Curating Truth for the Electorate.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer
+        branding={{ name: "VoteLens", tagline: "Nigeria" }}
+        links={[
+          { label: "Privacy Policy", href: "#" },
+          { label: "Terms of Service", href: "#" },
+          { label: "INEC Portal", href: "#", highlight: true },
+          { label: "Contact Us", href: "#" },
+        ]}
+        copyright="© 2024 VoteLens Nigeria. Curating Truth for the Electorate."
+      />
     </div>
   );
 }

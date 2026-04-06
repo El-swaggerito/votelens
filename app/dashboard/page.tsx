@@ -4,11 +4,25 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
+  LayoutDashboard,
+  User,
+  IdCard,
+  MapPin,
+  History as HistoryIcon,
+  BarChart3,
+  Route,
+  Bot,
+  Bell,
+} from "lucide-react";
+import {
   getStoredSession,
   clearStoredSession,
   getInitials,
   type LocalSession,
 } from "../../lib/local-auth";
+import { Sidebar } from "../../components/layout/Sidebar";
+import { Navbar } from "../../components/layout/Navbar";
+import { Footer } from "../../components/layout/Footer";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -48,53 +62,41 @@ export default function DashboardPage() {
     );
   }
 
+  const navigation = [
+    {
+      label: "Dashboard",
+      href: "/dashboard",
+      active: true,
+      icon: LayoutDashboard,
+    },
+    { label: "Profile", href: "/dashboard/profile", icon: User },
+    { label: "PVC Status", href: "/dashboard/pvc-status", icon: IdCard },
+    { label: "Polling Unit", href: "/dashboard/polling-unit", icon: MapPin },
+    { label: "History", href: "/dashboard/history", icon: HistoryIcon },
+    {
+      label: "Analytics",
+      href: "/dashboard/analytics",
+      icon: BarChart3,
+    },
+    { label: "Journey", href: "/dashboard/journey", icon: Route },
+    { label: "AI Assistant", href: "/dashboard/ai-assistant", icon: Bot },
+    { label: "Notifications", href: "/dashboard/notifications", icon: Bell },
+  ];
+
   return (
     <div className="flex min-h-screen bg-surface text-on-surface">
-      {/* SideNavBar - Desktop */}
-      <aside className="fixed left-0 top-0 z-40 hidden h-screen w-64 flex-col bg-surface-container-lowest border-r border-outline-variant/10 lg:flex">
-        <div className="flex flex-col h-full py-6 px-4 space-y-2">
-          <div className="flex items-center space-x-3 px-2 mb-8">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-on-primary shadow-sm">
-              <span className="text-xl font-bold">VL</span>
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-primary leading-none">VoteLens</h1>
-              <p className="text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">The Civic Architect</p>
-            </div>
-          </div>
-          
-          <nav className="flex-1 space-y-1">
-            {[
-              { name: "Dashboard", active: true },
-              { name: "Profile" },
-              { name: "PVC Status" },
-              { name: "Polling Unit" },
-              { name: "History" },
-              { name: "Analytics" },
-              { name: "Journey" },
-              { name: "AI Assistant" },
-            ].map((item) => (
-              <button
-                key={item.name}
-                className={`flex w-full items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
-                  item.active
-                    ? "bg-primary/8 text-primary font-bold shadow-sm"
-                    : "text-on-surface-variant hover:bg-surface-container-low"
-                }`}
-                type="button"
-              >
-                <span className="text-sm">{item.name}</span>
-              </button>
-            ))}
-          </nav>
-
-          <div className="pt-4 mt-4 border-t border-outline-variant/10">
-            <button className="primary-button w-full py-3 text-sm font-bold shadow-lg shadow-primary/10">
-              Register to Vote
-            </button>
-          </div>
-
-          <div className="mt-auto pt-6 space-y-1">
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        branding={{ name: "VoteLens", tagline: "The Civic Architect" }}
+        navigation={navigation}
+        footerActions={
+          <button className="primary-button w-full py-3 text-sm font-bold shadow-lg shadow-primary/10">
+            Register to Vote
+          </button>
+        }
+        userActions={
+          <>
             <button
               onClick={handleLogout}
               className="flex w-full items-center space-x-3 px-3 py-2 text-on-surface-variant hover:text-primary transition-colors"
@@ -108,100 +110,41 @@ export default function DashboardPage() {
             >
               <span className="text-sm">Help</span>
             </button>
-          </div>
-        </div>
-      </aside>
+          </>
+        }
+      />
 
-      {/* Mobile Sidebar Overlay */}
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 z-50 bg-black/50 lg:hidden"
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
-
-      {/* Mobile Sidebar */}
-      <aside
-        className={`fixed left-0 top-0 z-50 h-screen w-64 transform bg-surface-container-lowest transition-transform duration-300 ease-in-out lg:hidden ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="flex flex-col h-full py-6 px-4">
-          <div className="flex items-center justify-between mb-8 px-2">
-            <div className="flex items-center space-x-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-on-primary">
-                <span className="text-xl font-bold">VL</span>
-              </div>
-              <span className="text-lg font-bold text-primary">VoteLens</span>
-            </div>
-            <button onClick={() => setIsSidebarOpen(false)} className="p-2">✕</button>
-          </div>
-          <nav className="flex-1 space-y-1">
-            {["Dashboard", "Profile", "PVC Status", "Polling Unit", "History", "Analytics", "Journey", "AI Assistant"].map((name) => (
-              <button
-                key={name}
-                className="flex w-full items-center px-3 py-3 text-on-surface-variant hover:bg-surface-container-low rounded-lg"
-                type="button"
-              >
-                {name}
-              </button>
-            ))}
-          </nav>
-          <div className="mt-auto pt-6 space-y-4">
-            <button className="primary-button w-full py-3 text-sm font-bold">Register to Vote</button>
-            <button onClick={handleLogout} className="w-full text-center text-sm font-bold text-on-surface-variant">Logout</button>
-          </div>
-        </div>
-      </aside>
-
-      {/* Main Content Area */}
       <main className="flex min-h-screen flex-1 flex-col lg:ml-64">
-        {/* TopNavBar */}
-        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md shadow-civilized">
-          <div className="mx-auto flex w-full max-w-[1920px] items-center justify-between px-4 py-3 sm:px-8">
-            <div className="flex flex-1 items-center max-w-xl">
-              <button
-                onClick={() => setIsSidebarOpen(true)}
-                className="mr-4 p-2 lg:hidden text-on-surface-variant"
+        <Navbar
+          onMenuClick={() => setIsSidebarOpen(true)}
+          branding={{ name: "VoteLens" }}
+          searchPlaceholder="Search electoral data..."
+          rightContent={
+            <div className="flex items-center space-x-3">
+              <button 
+                onClick={() => router.push("/dashboard/notifications")}
+                className="relative p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors"
               >
-                ☰
+                <Bell className="h-5 w-5" />
+                <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-white"></span>
               </button>
-              <div className="relative w-full hidden xs:block">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">⌕</span>
-                <input
-                  className="w-full rounded-xl bg-surface-container-low py-2 pl-10 pr-4 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/20"
-                  placeholder="Search electoral data..."
-                  type="text"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-4 ml-4 sm:ml-8">
-              <nav className="hidden xl:flex items-center space-x-6 text-sm font-semibold font-display">
-                <a className="text-primary border-b-2 border-primary pb-1" href="#">Dashboard</a>
-                <a className="text-on-surface-variant hover:text-primary transition-colors" href="#">Education</a>
-                <a className="text-on-surface-variant hover:text-primary transition-colors" href="#">Voter Map</a>
-              </nav>
-              <div className="flex items-center space-x-3 pl-4 sm:pl-6 border-l border-outline-variant/10">
-                <button className="relative p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
-                  <span>🔔</span>
-                  <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-white"></span>
-                </button>
-                <div className="flex items-center space-x-3">
-                  <div className="text-right hidden sm:block">
-                    <p className="text-sm font-bold text-on-surface leading-none">{session.fullName}</p>
-                    <p className="text-[10px] text-on-surface-variant mt-1 uppercase tracking-wider font-bold">Verified Voter</p>
-                  </div>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-on-primary font-bold shadow-sm">
-                    {getInitials(session.fullName)}
-                  </div>
+              <div className="flex items-center space-x-3">
+                <div className="text-right hidden sm:block">
+                  <p className="text-sm font-bold text-on-surface leading-none">
+                    {session.fullName}
+                  </p>
+                  <p className="text-[10px] text-on-surface-variant mt-1 uppercase tracking-wider font-bold">
+                    Verified Voter
+                  </p>
+                </div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-on-primary font-bold shadow-sm">
+                  {getInitials(session.fullName)}
                 </div>
               </div>
             </div>
-          </div>
-        </header>
+          }
+        />
 
-        {/* Canvas */}
         <div className="p-4 sm:p-8 space-y-8 max-w-[1600px] mx-auto w-full">
           {/* Welcome Header */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -386,20 +329,25 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Footer */}
-        <footer className="w-full py-8 mt-auto bg-surface-container-lowest border-t border-outline-variant/10">
-          <div className="flex flex-col items-center justify-center space-y-4 px-8">
-            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-              {["Privacy Policy", "Terms of Service", "INEC Portal", "Contact Us"].map((item) => (
-                <a key={item} className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant hover:text-primary transition-colors" href="#">{item}</a>
-              ))}
-            </div>
-            <p className="text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-tighter">
-              © 2024 VoteLens Nigeria. Curating Truth for the Electorate.
-            </p>
-          </div>
-        </footer>
+        <Footer
+          branding={{ name: "VoteLens", tagline: "Nigeria" }}
+          links={[
+            { label: "Privacy Policy", href: "#" },
+            { label: "Terms of Service", href: "#" },
+            { label: "INEC Portal", href: "#" },
+            { label: "Contact Us", href: "#" },
+          ]}
+          copyright="© 2024 VoteLens Nigeria. Curating Truth for the Electorate."
+        />
       </main>
+
+      {/* Floating AI Assistant */}
+      <button 
+        onClick={() => router.push("/dashboard/ai-assistant")}
+        className="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50"
+      >
+        <Bot className="h-6 w-6" />
+      </button>
     </div>
   );
 }
