@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import {
   LayoutDashboard,
   User,
@@ -32,21 +33,20 @@ import { Sidebar } from "../../../components/layout/Sidebar";
 import { Navbar } from "../../../components/layout/Navbar";
 import { Footer } from "../../../components/layout/Footer";
 
+const EASING = [0.16, 1, 0.3, 1] as [number, number, number, number];
+const STAGGER = 0.1;
+
 export default function AnalyticsPage() {
   const router = useRouter();
   const [session, setSession] = useState<LocalSession | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const currentSession = getStoredSession();
     if (!currentSession) {
       router.replace("/");
     } else {
-      Promise.resolve().then(() => {
-        setSession(currentSession);
-        setIsLoading(false);
-      });
+      setSession(currentSession);
     }
   }, [router]);
 
@@ -55,18 +55,37 @@ export default function AnalyticsPage() {
     router.push("/");
   };
 
-  if (isLoading || !session) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-surface">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="text-sm font-bold text-primary animate-pulse">
-            Authenticating...
-          </p>
-        </div>
-      </div>
-    );
+  if (!session) {
+    return null;
   }
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: STAGGER,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: EASING },
+    },
+  };
+
+  const chartBarVariants = {
+    hidden: { scaleY: 0, originY: 1 },
+    visible: {
+      scaleY: 1,
+      transition: { duration: 1.5, ease: EASING },
+    },
+  };
 
   const navigation = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -147,7 +166,12 @@ export default function AnalyticsPage() {
           }
         />
 
-        <div className="p-3 sm:p-8 max-w-[1600px] w-full mx-auto space-y-6 sm:space-y-8 overflow-x-hidden">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="p-3 sm:p-8 max-w-[1600px] w-full mx-auto space-y-6 sm:space-y-8 overflow-x-hidden"
+        >
           {/* Summary Stats Bento Grid */}
           <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             {[
@@ -179,15 +203,20 @@ export default function AnalyticsPage() {
                 icon: Clock,
                 tone: "primary",
               },
-            ].map((stat) => (
-              <div
+            ].map((stat, index) => (
+              <motion.div
                 key={stat.label}
+                variants={itemVariants}
+                whileHover={{ y: -5, transition: { duration: 0.2 } }}
                 className="bg-surface-container-lowest p-4 sm:p-6 rounded-xl shadow-civilized flex flex-col justify-between group min-w-0 overflow-hidden border border-outline-variant/5"
               >
                 <div className="flex justify-between items-start">
-                  <span className="p-2 bg-secondary-container text-primary rounded-lg shrink-0">
+                  <motion.span 
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    className="p-2 bg-secondary-container text-primary rounded-lg shrink-0"
+                  >
                     <stat.icon className="h-5 w-5" />
-                  </span>
+                  </motion.span>
                   <span
                     className={`text-[10px] font-bold px-2 py-1 rounded whitespace-nowrap overflow-hidden text-ellipsis ${
                       stat.tone === "tertiary"
@@ -206,18 +235,26 @@ export default function AnalyticsPage() {
                   <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest truncate">
                     {stat.label}
                   </p>
-                  <h3 className="text-xl sm:text-2xl font-black text-on-surface font-display mt-1 break-all">
+                  <motion.h3 
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 + index * 0.1, duration: 0.8 }}
+                    className="text-xl sm:text-2xl font-black text-on-surface font-display mt-1 break-all"
+                  >
                     {stat.value}
-                  </h3>
+                  </motion.h3>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </section>
 
           {/* Main Analytics Section */}
           <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
             {/* Party Performance Chart */}
-            <div className="lg:col-span-8 bg-surface-container-lowest rounded-xl p-4 sm:p-8 shadow-civilized overflow-hidden flex flex-col border border-outline-variant/5">
+            <motion.div 
+              variants={itemVariants}
+              className="lg:col-span-8 bg-surface-container-lowest rounded-xl p-4 sm:p-8 shadow-civilized overflow-hidden flex flex-col border border-outline-variant/5"
+            >
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-10">
                 <div>
                   <h4 className="text-lg font-bold text-primary font-display uppercase tracking-tight">
@@ -244,27 +281,56 @@ export default function AnalyticsPage() {
                     { name: "Party B", value: "7.2M", height: "72%", color: "bg-secondary-fixed-dim" },
                     { name: "Party C", value: "5.8M", height: "58%", color: "bg-tertiary-fixed-dim" },
                     { name: "Others", value: "1.2M", height: "15%", color: "bg-surface-variant" },
-                  ].map((party) => (
+                  ].map((party, index) => (
                     <div key={party.name} className="flex-1 flex flex-col items-center gap-4">
-                      <div className={`w-full ${party.color} rounded-t-xl relative group transition-all duration-500 hover:brightness-110`} style={{ height: party.height }}>
+                      <motion.div 
+                        variants={chartBarVariants}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        custom={index}
+                        className={`w-full ${party.color} rounded-t-xl relative group transition-all duration-500 hover:brightness-110`} 
+                        style={{ height: party.height }}
+                      >
                         <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-on-background text-white px-3 py-1 rounded text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-xl z-10">
                           {party.value}
                         </div>
-                      </div>
-                      <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">
+                      </motion.div>
+                      <motion.span 
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 1 + index * 0.1 }}
+                        className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider"
+                      >
                         {party.name}
-                      </span>
+                      </motion.span>
                     </div>
                   ))}
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* AI Insights Panel */}
-            <div className="lg:col-span-4 bg-[#002110] text-white rounded-xl p-4 sm:p-8 flex flex-col relative overflow-hidden shadow-2xl">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary-container opacity-20 blur-3xl -mr-10 -mt-10"></div>
+            <motion.div 
+              variants={itemVariants}
+              className="lg:col-span-4 bg-[#002110] text-white rounded-xl p-4 sm:p-8 flex flex-col relative overflow-hidden shadow-2xl"
+            >
+              <motion.div 
+                animate={{ 
+                  scale: [1, 1.2, 1],
+                  opacity: [0.1, 0.2, 0.1] 
+                }}
+                transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
+                className="absolute top-0 right-0 w-32 h-32 bg-primary-container opacity-20 blur-3xl -mr-10 -mt-10"
+              ></motion.div>
               <div className="flex items-center gap-3 mb-8">
-                <Bot className="text-primary-fixed h-6 w-6" />
+                <motion.div
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                >
+                  <Bot className="text-primary-fixed h-6 w-6" />
+                </motion.div>
                 <h4 className="text-lg font-bold font-display uppercase tracking-tight">
                   AI Live Insights
                 </h4>
@@ -283,26 +349,40 @@ export default function AnalyticsPage() {
                     tag: "Projected Outcome",
                     content: "Based on current reporting from 70% of polling units, a run-off scenario probability has increased to 35%.",
                   },
-                ].map((insight) => (
-                  <div key={insight.tag} className="bg-white/5 p-4 rounded-xl border border-white/10 backdrop-blur-sm group hover:bg-white/10 transition-colors">
+                ].map((insight, index) => (
+                  <motion.div 
+                    key={insight.tag}
+                    initial={{ opacity: 0, x: 20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.5 + index * 0.2, duration: 0.8, ease: EASING }}
+                    className="bg-white/5 p-4 rounded-xl border border-white/10 backdrop-blur-sm group hover:bg-white/10 transition-colors"
+                  >
                     <p className="text-[10px] font-black text-primary-fixed uppercase tracking-[0.2em] mb-2">
                       {insight.tag}
                     </p>
                     <p className="text-sm text-secondary-fixed leading-relaxed">
                       {insight.content}
                     </p>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
-              <button className="mt-10 w-full py-4 bg-primary-fixed text-on-primary-fixed font-black text-[10px] uppercase tracking-[0.2em] rounded-full hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-black/20">
+              <motion.button 
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="mt-10 w-full py-4 bg-primary-fixed text-on-primary-fixed font-black text-[10px] uppercase tracking-[0.2em] rounded-full hover:brightness-110 transition-all shadow-lg shadow-black/20"
+              >
                 Ask Assistant Anything
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           </section>
 
           {/* Map & Regional Breakdown */}
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-            <div className="bg-surface-container-low rounded-2xl p-4 sm:p-8 h-[400px] sm:h-[500px] flex flex-col shadow-inner border border-outline-variant/10 overflow-hidden">
+            <motion.div 
+              variants={itemVariants}
+              className="bg-surface-container-low rounded-2xl p-4 sm:p-8 h-[400px] sm:h-[500px] flex flex-col shadow-inner border border-outline-variant/10 overflow-hidden"
+            >
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <h4 className="text-lg font-bold text-on-surface font-display uppercase tracking-tight">
                   Regional Lead Density
@@ -319,7 +399,13 @@ export default function AnalyticsPage() {
                   </div>
                 </div>
               </div>
-              <div className="flex-1 bg-white rounded-xl overflow-hidden relative border border-outline-variant/10 shadow-sm">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, ease: EASING }}
+                className="flex-1 bg-white rounded-xl overflow-hidden relative border border-outline-variant/10 shadow-sm"
+              >
                 <Image
                   alt="Regional Lead Map"
                   className="w-full h-full object-cover opacity-80 grayscale hover:grayscale-0 transition-all duration-1000"
@@ -329,17 +415,28 @@ export default function AnalyticsPage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-white/40 to-transparent"></div>
                 <div className="absolute bottom-4 right-4 flex flex-col gap-2">
-                  <button className="w-10 h-10 bg-white shadow-xl rounded-xl flex items-center justify-center text-primary border border-outline-variant/10 hover:scale-105 active:scale-95 transition-all">
+                  <motion.button 
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="w-10 h-10 bg-white shadow-xl rounded-xl flex items-center justify-center text-primary border border-outline-variant/10 transition-all"
+                  >
                     <Plus className="h-5 w-5" />
-                  </button>
-                  <button className="w-10 h-10 bg-white shadow-xl rounded-xl flex items-center justify-center text-primary border border-outline-variant/10 hover:scale-105 active:scale-95 transition-all">
+                  </motion.button>
+                  <motion.button 
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="w-10 h-10 bg-white shadow-xl rounded-xl flex items-center justify-center text-primary border border-outline-variant/10 transition-all"
+                  >
                     <Minus className="h-5 w-5" />
-                  </button>
+                  </motion.button>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
-            <div className="bg-surface-container-lowest rounded-2xl p-4 sm:p-8 shadow-civilized flex flex-col border border-outline-variant/5">
+            <motion.div 
+              variants={itemVariants}
+              className="bg-surface-container-lowest rounded-2xl p-4 sm:p-8 shadow-civilized flex flex-col border border-outline-variant/5"
+            >
               <h4 className="text-lg font-bold text-on-surface font-display uppercase tracking-tight mb-6 sm:mb-8">
                 Regional Breakdown
               </h4>
@@ -348,8 +445,15 @@ export default function AnalyticsPage() {
                   { name: "Lagos State", counted: "82%", a: "1.2M", b: "0.8M", c: "0.6M", aw: 45, bw: 30, cw: 25 },
                   { name: "Kano State", counted: "94%", a: "0.9M", b: "1.7M", c: "0.4M", aw: 30, bw: 55, cw: 15 },
                   { name: "Rivers State", counted: "65%", a: "0.8M", b: "0.3M", c: "0.5M", aw: 50, bw: 20, cw: 30 },
-                ].map((region) => (
-                  <div key={region.name} className="p-4 sm:p-5 bg-surface rounded-2xl border border-outline-variant/10 hover:border-primary/20 transition-all group min-w-0">
+                ].map((region, index) => (
+                  <motion.div 
+                    key={region.name}
+                    initial={{ opacity: 0, x: 20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.5 + index * 0.1, duration: 0.8, ease: EASING }}
+                    className="p-4 sm:p-5 bg-surface rounded-2xl border border-outline-variant/10 hover:border-primary/20 transition-all group min-w-0"
+                  >
                     <div className="flex justify-between items-center mb-4">
                       <span className="text-sm font-black text-on-surface uppercase tracking-tight truncate mr-2">
                         {region.name}
@@ -359,23 +463,44 @@ export default function AnalyticsPage() {
                       </span>
                     </div>
                     <div className="w-full h-2 bg-surface-container-highest rounded-full flex overflow-hidden shadow-inner">
-                      <div className="bg-primary h-full transition-all duration-1000" style={{ width: `${region.aw}%` }}></div>
-                      <div className="bg-secondary h-full transition-all duration-1000" style={{ width: `${region.bw}%` }}></div>
-                      <div className="bg-tertiary h-full transition-all duration-1000" style={{ width: `${region.cw}%` }}></div>
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${region.aw}%` }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1.5, ease: EASING, delay: 0.8 }}
+                        className="bg-primary h-full"
+                      ></motion.div>
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${region.bw}%` }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1.5, ease: EASING, delay: 1 }}
+                        className="bg-secondary h-full"
+                      ></motion.div>
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${region.cw}%` }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1.5, ease: EASING, delay: 1.2 }}
+                        className="bg-tertiary h-full"
+                      ></motion.div>
                     </div>
                     <div className="flex flex-wrap justify-start mt-3 text-[10px] font-black text-on-surface-variant uppercase tracking-[0.1em] gap-x-4 gap-y-2">
                       <span className="flex items-center gap-1.5 whitespace-nowrap"><span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span> A: {region.a}</span>
                       <span className="flex items-center gap-1.5 whitespace-nowrap"><span className="w-1.5 h-1.5 rounded-full bg-secondary shrink-0"></span> B: {region.b}</span>
                       <span className="flex items-center gap-1.5 whitespace-nowrap"><span className="w-1.5 h-1.5 rounded-full bg-tertiary shrink-0"></span> C: {region.c}</span>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
-            </div>
+            </motion.div>
           </section>
 
           {/* Detailed Data Table Section */}
-          <section className="bg-surface-container-lowest rounded-2xl shadow-civilized overflow-hidden border border-outline-variant/5">
+          <motion.section 
+            variants={itemVariants}
+            className="bg-surface-container-lowest rounded-2xl shadow-civilized overflow-hidden border border-outline-variant/5"
+          >
             <div className="p-4 sm:p-8 border-b border-outline-variant/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
               <div>
                 <h4 className="text-lg font-bold text-on-surface font-display uppercase tracking-tight">
@@ -391,13 +516,21 @@ export default function AnalyticsPage() {
                   <option>North West</option>
                   <option>South East</option>
                 </select>
-                <button className="bg-surface-container-low p-2.5 rounded-xl text-on-surface-variant hover:text-primary transition-colors">
+                <motion.button 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-surface-container-low p-2.5 rounded-xl text-on-surface-variant hover:text-primary transition-colors"
+                >
                   <Filter className="h-4 w-4" />
-                </button>
-                <button className="flex-1 md:flex-none bg-primary text-white px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-primary/10 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2">
+                </motion.button>
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex-1 md:flex-none bg-primary text-white px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-primary/10 hover:brightness-110 transition-all flex items-center justify-center gap-2"
+                >
                   <FileDown className="h-3.5 w-3.5" />
                   Export CSV
-                </button>
+                </motion.button>
               </div>
             </div>
             <div className="overflow-x-auto no-scrollbar w-full">
@@ -416,29 +549,42 @@ export default function AnalyticsPage() {
                     { name: "Abuja FCT Central", lead: "Party A", count: "142,301", margin: "+12,042", color: "bg-primary", status: "Verified" },
                     { name: "Edo South", lead: "Party C", count: "98,124", margin: "+4,521", color: "bg-tertiary", status: "Pending" },
                     { name: "Kaduna North", lead: "Party B", count: "210,049", margin: "+45,100", color: "bg-secondary", status: "Verified" },
-                  ].map((row) => (
-                    <tr key={row.name} className="hover:bg-surface-container-low/30 transition-colors group">
+                  ].map((row, index) => (
+                    <motion.tr 
+                      key={row.name}
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
+                      className="hover:bg-surface-container-low/30 transition-colors group"
+                    >
                       <td className="px-4 sm:px-8 py-6 font-bold text-on-surface uppercase tracking-tight">{row.name}</td>
                       <td className="px-4 sm:px-8 py-6">
                         <div className="flex items-center gap-3">
-                          <div className={`w-6 h-6 rounded-md ${row.color} shadow-sm group-hover:scale-110 transition-transform`}></div>
+                          <motion.div 
+                            whileHover={{ scale: 1.2 }}
+                            className={`w-6 h-6 rounded-md ${row.color} shadow-sm transition-transform`}
+                          ></motion.div>
                           <span className="font-bold text-on-surface-variant uppercase text-xs">{row.lead}</span>
                         </div>
                       </td>
                       <td className="px-4 sm:px-8 py-6 font-bold tabular-nums">{row.count}</td>
                       <td className="px-4 sm:px-8 py-6 text-tertiary font-black tabular-nums">{row.margin}</td>
                       <td className="px-4 sm:px-8 py-6">
-                        <span className={`px-3 py-1.5 ${row.status === "Verified" ? "bg-tertiary-container text-white" : "bg-secondary-container text-on-secondary-fixed-variant"} text-[10px] font-black uppercase rounded-lg shadow-sm whitespace-nowrap`}>
+                        <motion.span 
+                          whileHover={{ scale: 1.05 }}
+                          className={`px-3 py-1.5 ${row.status === "Verified" ? "bg-tertiary-container text-white" : "bg-secondary-container text-on-secondary-fixed-variant"} text-[10px] font-black uppercase rounded-lg shadow-sm whitespace-nowrap inline-block`}
+                        >
                           {row.status}
-                        </span>
+                        </motion.span>
                       </td>
-                    </tr>
+                    </motion.tr>
                   ))}
                 </tbody>
               </table>
             </div>
-          </section>
-        </div>
+          </motion.section>
+        </motion.div>
 
         <Footer
           branding={{ name: "VoteLens", tagline: "Nigeria" }}
@@ -453,12 +599,22 @@ export default function AnalyticsPage() {
       </main>
 
       {/* Floating AI Assistant */}
-      <button 
+      <motion.button 
+        initial={{ scale: 0, rotate: -180 }}
+        animate={{ scale: 1, rotate: 0 }}
+        whileHover={{ scale: 1.1, rotate: 10 }}
+        whileTap={{ scale: 0.9 }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 260, 
+          damping: 20,
+          delay: 1.5
+        }}
         onClick={() => router.push("/dashboard/ai-assistant")}
-        className="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50"
+        className="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center z-50"
       >
         <Bot className="h-6 w-6" />
-      </button>
+      </motion.button>
     </div>
   );
 }

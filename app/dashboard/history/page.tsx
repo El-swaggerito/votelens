@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import {
   LayoutDashboard,
   User,
@@ -28,21 +29,19 @@ import { Sidebar } from "../../../components/layout/Sidebar";
 import { Navbar } from "../../../components/layout/Navbar";
 import { Footer } from "../../../components/layout/Footer";
 
+const EASING = [0.16, 1, 0.3, 1] as [number, number, number, number];
+
 export default function ElectionHistoryPage() {
   const router = useRouter();
   const [session, setSession] = useState<LocalSession | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const currentSession = getStoredSession();
     if (!currentSession) {
       router.replace("/");
     } else {
-      Promise.resolve().then(() => {
-        setSession(currentSession);
-        setIsLoading(false);
-      });
+      setSession(currentSession);
     }
   }, [router]);
 
@@ -51,18 +50,38 @@ export default function ElectionHistoryPage() {
     router.push("/");
   };
 
-  if (isLoading || !session) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-surface">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="text-sm font-bold text-primary animate-pulse">
-            Authenticating...
-          </p>
-        </div>
-      </div>
-    );
+  if (!session) {
+    return null;
   }
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: EASING },
+    },
+  };
+
+  const heroVariants = {
+    hidden: { opacity: 0, x: -30 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 1, ease: EASING },
+    },
+  };
 
   const navigation = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -142,38 +161,71 @@ export default function ElectionHistoryPage() {
           }
         />
 
-        <div className="p-3 sm:p-8 max-w-[1400px] w-full mx-auto space-y-8 sm:space-y-12 overflow-x-hidden">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="p-3 sm:p-8 max-w-[1400px] w-full mx-auto space-y-8 sm:space-y-12 overflow-x-hidden"
+        >
           {/* Hero Header Section */}
           <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end overflow-hidden">
-            <div className="lg:col-span-8 space-y-4">
-              <span className="inline-flex items-center px-3 py-1 bg-secondary-container text-on-secondary-fixed-variant text-[10px] font-bold rounded-md uppercase tracking-wider">
+            <motion.div variants={heroVariants} className="lg:col-span-8 space-y-4">
+              <motion.span 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5 }}
+                className="inline-flex items-center px-3 py-1 bg-secondary-container text-on-secondary-fixed-variant text-[10px] font-bold rounded-md uppercase tracking-wider"
+              >
                 Historical Data Repository
-              </span>
+              </motion.span>
               <h1 className="text-2xl sm:text-6xl font-black text-on-background leading-tight tracking-tighter font-display break-words">
                 Tracing the Path of <br className="hidden sm:block" />
-                <span className="text-primary italic">Democratic Resilience.</span>
+                <motion.span 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.8, duration: 1.5 }}
+                  className="text-primary italic"
+                >
+                  Democratic Resilience.
+                </motion.span>
               </h1>
               <p className="text-on-surface-variant text-sm sm:text-lg max-w-2xl leading-relaxed">
                 Explore Nigeria&apos;s electoral journey from 1999 to the present.
                 Comprehensive data visualization of results, turnout trends, and
                 historical milestones.
               </p>
-            </div>
-            <div className="lg:col-span-4 flex justify-start lg:justify-end">
-              <div className="bg-surface-container-lowest p-6 rounded-xl shadow-civilized border border-outline-variant/10 w-full max-w-xs text-center space-y-2">
-                <span className="text-4xl font-black text-primary font-display">
+            </motion.div>
+            <motion.div 
+              variants={itemVariants}
+              className="lg:col-span-4 flex justify-start lg:justify-end"
+            >
+              <motion.div 
+                whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                className="bg-surface-container-lowest p-6 rounded-xl shadow-civilized border border-outline-variant/10 w-full max-w-xs text-center space-y-2"
+              >
+                <motion.span 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1, duration: 0.8 }}
+                  className="text-4xl font-black text-primary font-display block"
+                >
                   24+
-                </span>
+                </motion.span>
                 <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
                   Years of Democracy
                 </p>
-                <div className="h-1 w-12 bg-primary mx-auto"></div>
-              </div>
-            </div>
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: "3rem" }}
+                  transition={{ delay: 1.2, duration: 0.8, ease: EASING }}
+                  className="h-1 bg-primary mx-auto"
+                ></motion.div>
+              </motion.div>
+            </motion.div>
           </section>
 
           {/* Filters and Tabs */}
-          <section className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <motion.section variants={itemVariants} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div className="flex bg-surface-container-low p-1 rounded-xl w-full md:w-auto overflow-x-auto no-scrollbar scroll-smooth">
               <div className="flex min-w-max md:min-w-0">
                 <button className="px-4 sm:px-6 py-2 bg-surface-container-lowest text-primary font-bold rounded-lg shadow-sm text-xs whitespace-nowrap">
@@ -196,43 +248,80 @@ export default function ElectionHistoryPage() {
                   Filter Year:
                 </span>
                 <div className="flex gap-2">
-                  <button className="px-4 py-1.5 border-2 border-primary text-primary font-bold rounded-full text-[10px] uppercase tracking-wider whitespace-nowrap">
+                  <motion.button 
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-4 py-1.5 border-2 border-primary text-primary font-bold rounded-full text-[10px] uppercase tracking-wider whitespace-nowrap"
+                  >
                     2023
-                  </button>
-                  <button className="px-4 py-1.5 border-2 border-transparent bg-surface-container-high text-on-surface-variant font-bold rounded-full text-[10px] uppercase tracking-wider hover:border-outline-variant transition-all whitespace-nowrap">
+                  </motion.button>
+                  <motion.button 
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-4 py-1.5 border-2 border-transparent bg-surface-container-high text-on-surface-variant font-bold rounded-full text-[10px] uppercase tracking-wider hover:border-outline-variant transition-all whitespace-nowrap"
+                  >
                     2019
-                  </button>
-                  <button className="px-4 py-1.5 border-2 border-transparent bg-surface-container-high text-on-surface-variant font-bold rounded-full text-[10px] uppercase tracking-wider hover:border-outline-variant transition-all whitespace-nowrap">
+                  </motion.button>
+                  <motion.button 
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-4 py-1.5 border-2 border-transparent bg-surface-container-high text-on-surface-variant font-bold rounded-full text-[10px] uppercase tracking-wider hover:border-outline-variant transition-all whitespace-nowrap"
+                  >
                     2015
-                  </button>
-                  <button className="px-4 py-1.5 border-2 border-transparent bg-surface-container-high text-on-surface-variant font-bold rounded-full text-[10px] uppercase tracking-wider hover:border-outline-variant transition-all whitespace-nowrap">
+                  </motion.button>
+                  <motion.button 
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-4 py-1.5 border-2 border-transparent bg-surface-container-high text-on-surface-variant font-bold rounded-full text-[10px] uppercase tracking-wider hover:border-outline-variant transition-all whitespace-nowrap"
+                  >
                     Archive
-                  </button>
+                  </motion.button>
                 </div>
               </div>
             </div>
-          </section>
+          </motion.section>
 
           {/* Archive Bento Grid */}
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* 2023 Presidential Card */}
-            <div className="lg:col-span-2 bg-surface-container-lowest rounded-xl overflow-hidden shadow-civilized hover:shadow-glass transition-all flex flex-col md:flex-row group border border-transparent hover:border-primary/10">
+            <motion.div 
+              variants={itemVariants}
+              whileHover={{ y: -5 }}
+              className="lg:col-span-2 bg-surface-container-lowest rounded-xl overflow-hidden shadow-civilized hover:shadow-glass transition-all flex flex-col md:flex-row group border border-transparent hover:border-primary/10"
+            >
               <div className="md:w-1/2 relative h-64 md:h-auto overflow-hidden">
-                <Image
-                  alt="Crowd voting in Nigeria"
-                  className="h-full w-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
-                  height={600}
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDp2WBYD-sv2xDJN4rfaiDc18N6ogljZ7E8Ldhf7xKRsGzeOMoc7yehqS-GiozQlq2zEhWmY40J_0-I_aQVWPCglVFjjaVzzh7s5BHS0zcGalXwvhPlInW0HpaNgTjE1O1CJK1nqV49_9oYd6EvmT5IhBv70_u-7QFJp0gMxWUYEhVaw1tBOdmSqObLePVO0XtKmQYZWHNBwMDoo0bCouIPSGj8luTDXvsw-NO56NpJvewet7z6ymZQ94hAO4-_H99EM8GLrDhoaZo"
-                  width={800}
-                />
+                <motion.div
+                  initial={{ scale: 1.1 }}
+                  whileHover={{ scale: 1 }}
+                  transition={{ duration: 1.5, ease: EASING }}
+                  className="h-full w-full"
+                >
+                  <Image
+                    alt="Crowd voting in Nigeria"
+                    className="h-full w-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+                    height={600}
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDp2WBYD-sv2xDJN4rfaiDc18N6ogljZ7E8Ldhf7xKRsGzeOMoc7yehqS-GiozQlq2zEhWmY40J_0-I_aQVWPCglVFjjaVzzh7s5BHS0zcGalXwvhPlInW0HpaNgTjE1O1CJK1nqV49_9oYd6EvmT5IhBv70_u-7QFJp0gMxWUYEhVaw1tBOdmSqObLePVO0XtKmQYZWHNBwMDoo0bCouIPSGj8luTDXvsw-NO56NpJvewet7z6ymZQ94hAO4-_H99EM8GLrDhoaZo"
+                    width={800}
+                  />
+                </motion.div>
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent"></div>
                 <div className="absolute bottom-6 left-6 text-white">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">
+                  <motion.p 
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 0.8, x: 0 }}
+                    viewport={{ once: true }}
+                    className="text-[10px] font-bold uppercase tracking-[0.2em]"
+                  >
                     Latest Archive
-                  </p>
-                  <h3 className="text-2xl sm:text-3xl font-black font-display">
+                  </motion.p>
+                  <motion.h3 
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="text-2xl sm:text-3xl font-black font-display"
+                  >
                     2023 General Election
-                  </h3>
+                  </motion.h3>
                 </div>
               </div>
               <div className="md:w-1/2 p-6 sm:p-8 space-y-6 flex flex-col justify-center">
@@ -262,18 +351,31 @@ export default function ElectionHistoryPage() {
                     </span>
                   </div>
                   <div className="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
-                    <div className="bg-primary h-full w-[37%]"></div>
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      whileInView={{ width: "37%" }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 1.5, ease: EASING }}
+                      className="bg-primary h-full"
+                    ></motion.div>
                   </div>
                 </div>
-                <button className="flex items-center gap-2 text-primary font-bold text-sm group/btn">
+                <motion.button 
+                  whileHover={{ x: 5 }}
+                  className="flex items-center gap-2 text-primary font-bold text-sm group/btn"
+                >
                   View Full Result Breakdown
                   <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
-                </button>
+                </motion.button>
               </div>
-            </div>
+            </motion.div>
 
             {/* 2019 Presidential Card */}
-            <div className="bg-surface-container-lowest p-8 rounded-xl shadow-civilized border border-outline-variant/10 space-y-6 flex flex-col">
+            <motion.div 
+              variants={itemVariants}
+              whileHover={{ y: -5 }}
+              className="bg-surface-container-lowest p-8 rounded-xl shadow-civilized border border-outline-variant/10 space-y-6 flex flex-col"
+            >
               <div className="flex justify-between items-start">
                 <div>
                   <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
@@ -283,25 +385,31 @@ export default function ElectionHistoryPage() {
                     2019 Presidential
                   </h3>
                 </div>
-                <ShieldCheck className="text-primary h-8 w-8" />
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ repeat: Infinity, duration: 3 }}
+                >
+                  <ShieldCheck className="text-primary h-8 w-8" />
+                </motion.div>
               </div>
               <div className="space-y-4 flex-1">
-                <div className="flex justify-between border-b border-outline-variant/10 pb-2">
-                  <span className="text-sm text-on-surface-variant">Winner</span>
-                  <span className="text-sm font-bold">M. Buhari (APC)</span>
-                </div>
-                <div className="flex justify-between border-b border-outline-variant/10 pb-2">
-                  <span className="text-sm text-on-surface-variant">
-                    Total Votes
-                  </span>
-                  <span className="text-sm font-bold tabular-nums">27.3M</span>
-                </div>
-                <div className="flex justify-between border-b border-outline-variant/10 pb-2">
-                  <span className="text-sm text-on-surface-variant">
-                    States Won
-                  </span>
-                  <span className="text-sm font-bold">19 of 36</span>
-                </div>
+                {[
+                  { label: "Winner", value: "M. Buhari (APC)" },
+                  { label: "Total Votes", value: "27.3M" },
+                  { label: "States Won", value: "19 of 36" },
+                ].map((stat, idx) => (
+                  <motion.div 
+                    key={stat.label}
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="flex justify-between border-b border-outline-variant/10 pb-2"
+                  >
+                    <span className="text-sm text-on-surface-variant">{stat.label}</span>
+                    <span className="text-sm font-bold">{stat.value}</span>
+                  </motion.div>
+                ))}
               </div>
               <div className="pt-4 flex gap-4">
                 <div className="flex-1 text-center py-3 bg-surface-container-low rounded-lg">
@@ -321,23 +429,41 @@ export default function ElectionHistoryPage() {
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* History Timeline Section */}
             <div className="lg:col-span-3 pt-12 space-y-12">
-              <div className="text-center space-y-2">
+              <motion.div variants={itemVariants} className="text-center space-y-2">
                 <h2 className="text-3xl sm:text-4xl font-black text-on-background uppercase tracking-tight font-display">
                   The Democratic Journey
                 </h2>
-                <div className="h-1.5 w-24 bg-primary mx-auto rounded-full"></div>
-              </div>
+                <motion.div 
+                  initial={{ width: 0 }}
+                  whileInView={{ width: "6rem" }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1, ease: EASING }}
+                  className="h-1.5 bg-primary mx-auto rounded-full"
+                ></motion.div>
+              </motion.div>
               <div className="relative px-4">
                 {/* Vertical Line */}
-                <div className="absolute left-8 sm:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-outline-variant/30 to-surface sm:transform sm:-translate-x-1/2"></div>
+                <motion.div 
+                  initial={{ scaleY: 0 }}
+                  whileInView={{ scaleY: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.5, ease: EASING }}
+                  className="absolute left-8 sm:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-outline-variant/30 to-surface sm:transform sm:-translate-x-1/2 origin-top"
+                ></motion.div>
                 <div className="space-y-16">
                   {/* 2015 Point */}
                   <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between group pl-12 sm:pl-0">
-                    <div className="sm:w-[45%] text-left sm:text-right sm:pr-8 space-y-2 mb-4 sm:mb-0">
+                    <motion.div 
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.8 }}
+                      className="sm:w-[45%] text-left sm:text-right sm:pr-8 space-y-2 mb-4 sm:mb-0"
+                    >
                       <h4 className="text-lg sm:text-xl font-black text-primary font-display">
                         2015 Transition
                       </h4>
@@ -345,9 +471,21 @@ export default function ElectionHistoryPage() {
                         First time an incumbent president was defeated in
                         Nigeria&apos;s history.
                       </p>
-                    </div>
-                    <div className="absolute left-8 sm:left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-primary ring-8 ring-primary/10 z-10 top-2 sm:top-auto"></div>
-                    <div className="sm:w-[45%] sm:pl-8 w-full">
+                    </motion.div>
+                    <motion.div 
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                      className="absolute left-8 sm:left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-primary ring-8 ring-primary/10 z-10 top-2 sm:top-auto"
+                    ></motion.div>
+                    <motion.div 
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.8 }}
+                      className="sm:w-[45%] sm:pl-8 w-full"
+                    >
                       <div className="relative h-40 sm:h-32 w-full overflow-hidden rounded-xl">
                         <Image
                           alt="Historic handshake"
@@ -357,45 +495,84 @@ export default function ElectionHistoryPage() {
                           width={300}
                         />
                       </div>
-                    </div>
+                    </motion.div>
                   </div>
                   {/* 2011 Point */}
                   <div className="relative flex flex-col sm:flex-row-reverse items-start sm:items-center justify-between group pl-12 sm:pl-0">
-                    <div className="sm:w-[45%] text-left sm:pl-8 space-y-2 mb-4 sm:mb-0">
+                    <motion.div 
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.8 }}
+                      className="sm:w-[45%] text-left sm:pl-8 space-y-2 mb-4 sm:mb-0"
+                    >
                       <h4 className="text-lg sm:text-xl font-black text-on-background font-display">
                         2011 Reforms
                       </h4>
                       <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
                         Introduction of biometric registration systems.
                       </p>
-                    </div>
-                    <div className="absolute left-8 sm:left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-on-surface-variant ring-4 ring-on-surface-variant/10 z-10 top-2 sm:top-auto"></div>
-                    <div className="sm:w-[45%] sm:pr-8 w-full">
+                    </motion.div>
+                    <motion.div 
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                      className="absolute left-8 sm:left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-on-surface-variant ring-4 ring-on-surface-variant/10 z-10 top-2 sm:top-auto"
+                    ></motion.div>
+                    <motion.div 
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.8 }}
+                      className="sm:w-[45%] sm:pr-8 w-full"
+                    >
                       <div className="w-full h-24 sm:h-32 bg-surface-container-high rounded-xl border-2 border-dashed border-outline-variant flex items-center justify-center p-4 text-center">
                         <p className="text-[10px] sm:text-xs font-bold text-outline uppercase tracking-widest">
                           Biometric Era Begins
                         </p>
                       </div>
-                    </div>
+                    </motion.div>
                   </div>
                   {/* 1999 Point */}
                   <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between group pl-12 sm:pl-0">
-                    <div className="sm:w-[45%] text-left sm:text-right sm:pr-8 space-y-2 mb-4 sm:mb-0">
+                    <motion.div 
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.8 }}
+                      className="sm:w-[45%] text-left sm:text-right sm:pr-8 space-y-2 mb-4 sm:mb-0"
+                    >
                       <h4 className="text-lg sm:text-xl font-black text-on-background font-display">
                         1999 Fourth Republic
                       </h4>
                       <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
                         Return to civilian rule after military governance.
                       </p>
-                    </div>
-                    <div className="absolute left-8 sm:left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full bg-primary-container ring-8 ring-primary-container/10 z-10 flex items-center justify-center shadow-lg top-1 sm:top-auto">
+                    </motion.div>
+                    <motion.div 
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                      className="absolute left-8 sm:left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full bg-primary-container ring-8 ring-primary-container/10 z-10 flex items-center justify-center shadow-lg top-1 sm:top-auto"
+                    >
                       <Star className="text-white h-3 w-3 fill-white" />
-                    </div>
-                    <div className="sm:w-[45%] sm:pl-8 w-full">
-                      <div className="aspect-square w-16 bg-primary text-white flex items-center justify-center rounded-xl font-black text-xl sm:text-2xl rotate-3 group-hover:rotate-0 transition-transform font-display">
+                    </motion.div>
+                    <motion.div 
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.8 }}
+                      className="sm:w-[45%] sm:pl-8 w-full"
+                    >
+                      <motion.div 
+                        whileHover={{ rotate: 0 }}
+                        className="aspect-square w-16 bg-primary text-white flex items-center justify-center rounded-xl font-black text-xl sm:text-2xl rotate-3 transition-transform font-display"
+                      >
                         99
-                      </div>
-                    </div>
+                      </motion.div>
+                    </motion.div>
                   </div>
                 </div>
               </div>
@@ -403,7 +580,10 @@ export default function ElectionHistoryPage() {
           </section>
 
           {/* Data Transparency Note */}
-          <section className="bg-surface-container-low p-6 sm:p-8 rounded-xl border-l-4 border-primary space-y-4">
+          <motion.section 
+            variants={itemVariants}
+            className="bg-surface-container-low p-6 sm:p-8 rounded-xl border-l-4 border-primary space-y-4"
+          >
             <div className="flex items-center gap-3">
               <Info className="text-primary h-5 w-5" />
               <h3 className="font-bold text-lg uppercase tracking-tight font-display">
@@ -418,21 +598,23 @@ export default function ElectionHistoryPage() {
               final and for educational purposes.
             </p>
             <div className="flex flex-wrap gap-6 pt-2">
-              <a
-                className="text-[10px] font-black text-primary underline uppercase tracking-widest hover:opacity-70 transition-opacity"
+              <motion.a
+                whileHover={{ opacity: 0.7, x: 2 }}
+                className="text-[10px] font-black text-primary underline uppercase tracking-widest transition-opacity inline-block"
                 href="#"
               >
                 Download 2023 Summary (PDF)
-              </a>
-              <a
-                className="text-[10px] font-black text-primary underline uppercase tracking-widest hover:opacity-70 transition-opacity"
+              </motion.a>
+              <motion.a
+                whileHover={{ opacity: 0.7, x: 2 }}
+                className="text-[10px] font-black text-primary underline uppercase tracking-widest transition-opacity inline-block"
                 href="#"
               >
                 Visit INEC Portal
-              </a>
+              </motion.a>
             </div>
-          </section>
-        </div>
+          </motion.section>
+        </motion.div>
 
         <Footer
           branding={{ name: "VoteLens", tagline: "Nigeria" }}
@@ -447,12 +629,22 @@ export default function ElectionHistoryPage() {
       </main>
 
       {/* Floating AI Assistant */}
-      <button 
+      <motion.button 
+        initial={{ scale: 0, rotate: -180 }}
+        animate={{ scale: 1, rotate: 0 }}
+        whileHover={{ scale: 1.1, rotate: 10 }}
+        whileTap={{ scale: 0.9 }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 260, 
+          damping: 20,
+          delay: 1.5
+        }}
         onClick={() => router.push("/dashboard/ai-assistant")}
-        className="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50"
+        className="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center z-50"
       >
         <Bot className="h-6 w-6" />
-      </button>
+      </motion.button>
     </div>
   );
 }

@@ -14,14 +14,14 @@ import { Navbar } from "../components/layout/Navbar";
 import { Footer } from "../components/layout/Footer";
 
 // Senior-level Animation Constants
-const EASING = [0.16, 1, 0.3, 1]; // Custom cubic-bezier for professional feel
-const DURATION = 0.8;
-
-const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: DURATION, ease: EASING },
-};
+ const EASING: [number, number, number, number] = [0.16, 1, 0.3, 1]; // Custom cubic-bezier for professional feel
+ const DURATION = 0.8;
+ 
+ const fadeInUp = {
+   initial: { opacity: 0, y: 20 },
+   animate: { opacity: 1, y: 0 },
+   transition: { duration: DURATION, ease: EASING },
+ };
 
 const staggerContainer = {
   animate: {
@@ -125,7 +125,11 @@ export default function Home() {
         showSearch={false}
         rightContent={
           session ? (
-            <div className="flex items-center gap-2">
+            <motion.div 
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex items-center gap-2"
+            >
               <div className="flex h-9 min-w-9 items-center justify-center rounded-full bg-primary px-2 text-xs font-bold tracking-[0.14em] text-on-primary">
                 {getInitials(session.fullName)}
               </div>
@@ -136,7 +140,7 @@ export default function Home() {
               >
                 Sign out
               </button>
-            </div>
+            </motion.div>
           ) : (
             <Link
               className="rounded-full bg-surface-container-low px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-surface-container-high"
@@ -151,30 +155,44 @@ export default function Home() {
         <section className="relative overflow-hidden px-6 pb-20 pt-12 sm:px-8 lg:pb-32 lg:pt-24">
           <div className="absolute inset-0 bg-[linear-gradient(135deg,rgb(0_107_63_/_0.05),transparent_45%,rgb(40_135_49_/_0.05))]" />
           <div className="relative mx-auto grid max-w-[1600px] grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-24">
-            <div className="flex flex-col items-center text-center space-y-8 lg:items-start lg:text-left">
-              <div className="inline-flex items-center gap-2 rounded-md bg-secondary-container px-4 py-2 text-sm font-medium text-on-secondary-fixed-variant">
+            <motion.div 
+              initial="initial"
+              animate="animate"
+              variants={staggerContainer}
+              className="flex flex-col items-center text-center space-y-8 lg:items-start lg:text-left"
+            >
+              <motion.div 
+                variants={fadeInUp}
+                className="inline-flex items-center gap-2 rounded-md bg-secondary-container px-4 py-2 text-sm font-medium text-on-secondary-fixed-variant"
+              >
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-tertiary-container text-xs font-bold text-on-tertiary-container">
                   ✓
                 </span>
                 Official Civic Data Platform
-              </div>
+              </motion.div>
 
               <div className="space-y-6">
-                <h1 className="font-display text-4xl font-black leading-[1.1] tracking-[-0.05em] text-on-surface xs:text-5xl sm:text-6xl lg:text-7xl xl:text-8xl">
+                <motion.h1 
+                  variants={fadeInUp}
+                  className="font-display text-4xl font-black leading-[1.1] tracking-[-0.05em] text-on-surface xs:text-5xl sm:text-6xl lg:text-7xl xl:text-8xl"
+                >
                   Your Vote,
                   <br />
                   <span className="text-primary">Your Voice,</span>
                   <br />
                   Your Future
-                </h1>
+                </motion.h1>
 
-                <p className="max-w-xl text-base leading-relaxed text-on-surface-variant sm:text-lg sm:leading-8 lg:text-xl">
+                <motion.p 
+                  variants={fadeInUp}
+                  className="max-w-xl text-base leading-relaxed text-on-surface-variant sm:text-lg sm:leading-8 lg:text-xl"
+                >
                   Navigate the democratic landscape with architectural precision.
                   VoteLens provides the verified data and tools you need to build
                   Nigeria&apos;s future.
-                </p>
+                </motion.p>
                 {session ? (
-                  <div className="space-y-4">
+                  <motion.div variants={fadeInUp} className="space-y-4">
                     <p className="text-sm font-semibold tracking-[0.14em] text-primary">
                       Signed in locally as {session.fullName}
                     </p>
@@ -184,11 +202,14 @@ export default function Home() {
                     >
                       Go to Dashboard →
                     </Link>
-                  </div>
+                  </motion.div>
                 ) : null}
               </div>
 
-              <div className="flex flex-col w-full xs:flex-row xs:w-auto gap-4 pt-2">
+              <motion.div 
+                variants={fadeInUp}
+                className="flex flex-col w-full xs:flex-row xs:w-auto gap-4 pt-2"
+              >
                 {session ? (
                   <button
                     className="primary-button flex items-center justify-center gap-2 px-8 py-4 text-lg font-bold w-full xs:w-auto"
@@ -210,28 +231,41 @@ export default function Home() {
                 <button className="ghost-button px-8 py-4 text-lg font-bold w-full xs:w-auto">
                   How It Works
                 </button>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
-            <div className="relative w-full max-w-2xl mx-auto lg:max-w-none">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, ease: EASING, delay: 0.2 }}
+              className="relative w-full max-w-2xl mx-auto lg:max-w-none"
+            >
               <div className="absolute -inset-4 rounded-[2rem] bg-[linear-gradient(45deg,rgb(0_107_63_/_0.2),rgb(92_120_101_/_0.1))] blur-3xl" />
               <div className="relative rounded-[1.5rem] bg-surface-container-lowest p-4 shadow-[0_24px_48px_rgb(0_33_16_/_0.08)] sm:p-8">
-                <Image
-                  alt="VoteLens UI Preview"
-                  className="mb-6 w-full rounded-[1rem] object-cover aspect-[4/3] lg:aspect-auto"
-                  height={900}
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvu88wqHRWoOIbZGsurfgXerGzD_kIUc3NsmoI8wDD9HvvI1MILOcR9Y4hkl6ECqqy146JCi4NXrQlRfXiqWrdF6P8FOAkIYr9-ha10_QYvnJl1Ug7zOeBQn7ZzohQY401GNnmiU75I37GqI6SX9-YphS-bpKWmVgl7FJqhxskxmFOOF6XphQaT_YN1UuAItGNcJvWbP11NNbhsIAyYkpT3WGDve9yuAW5ilKblLeQq5P-xOszGqCHDHN-KYk3e1DSavRNkU08wxQ"
-                  width={1200}
-                  priority
-                />
+                <motion.div
+                  whileHover={{ scale: 1.01 }}
+                  transition={{ duration: 0.4, ease: EASING }}
+                >
+                  <Image
+                    alt="VoteLens UI Preview"
+                    className="mb-6 w-full rounded-[1rem] object-cover aspect-[4/3] lg:aspect-auto"
+                    height={900}
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvu88wqHRWoOIbZGsurfgXerGzD_kIUc3NsmoI8wDD9HvvI1MILOcR9Y4hkl6ECqqy146JCi4NXrQlRfXiqWrdF6P8FOAkIYr9-ha10_QYvnJl1Ug7zOeBQn7ZzohQY401GNnmiU75I37GqI6SX9-YphS-bpKWmVgl7FJqhxskxmFOOF6XphQaT_YN1UuAItGNcJvWbP11NNbhsIAyYkpT3WGDve9yuAW5ilKblLeQq5P-xOszGqCHDHN-KYk3e1DSavRNkU08wxQ"
+                    width={1200}
+                    priority
+                  />
+                </motion.div>
                 <div className="grid grid-cols-1 xs:grid-cols-3 gap-3 sm:gap-4">
                   {[
                     ["24M+", "Voters"],
                     ["176K", "Units"],
                     ["99%", "Verified"],
-                  ].map(([value, label]) => (
-                    <div
+                  ].map(([value, label], index) => (
+                    <motion.div
                       key={label}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6 + (index * 0.1), duration: 0.5, ease: EASING }}
                       className="rounded-[1rem] bg-surface-container-low px-4 py-4 text-center"
                     >
                       <span className="font-display block text-xl sm:text-2xl font-black text-primary">
@@ -240,30 +274,44 @@ export default function Home() {
                       <span className="mt-1 block text-[10px] sm:text-xs font-semibold uppercase tracking-[0.12em] sm:tracking-[0.18em] text-on-surface-variant">
                         {label}
                       </span>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </section>
 
-        <section className="bg-surface-container-low px-6 py-20 sm:px-8 lg:py-32">
+        <section className="bg-surface-container-low px-6 py-20 sm:px-8 lg:py-32 overflow-hidden">
           <div className="mx-auto max-w-[1600px]">
-            <div className="mb-12 text-center lg:text-left lg:mb-16">
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, ease: EASING }}
+              className="mb-12 text-center lg:text-left lg:mb-16"
+            >
               <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black tracking-[-0.04em] text-on-surface">
                 Democratic Toolset
               </h2>
               <p className="mt-4 text-base sm:text-lg text-on-surface-variant max-w-2xl mx-auto lg:mx-0">
                 Curated digital instruments for every citizen architect.
               </p>
-            </div>
+            </motion.div>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-6">
+            <motion.div 
+              initial="initial"
+              whileInView="animate"
+              viewport={{ once: true, margin: "-50px" }}
+              variants={staggerContainer}
+              className="grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-6"
+            >
               {featureCards.map((card) => (
-                <div
+                <motion.div
                   key={card.title}
-                  className={`${card.className} rounded-[1.5rem] p-6 sm:p-8 shadow-[0_12px_28px_rgb(0_33_16_/_0.05)] transition-all hover:shadow-[0_18px_36px_rgb(0_33_16_/_0.08)] hover:-translate-y-1`}
+                  variants={fadeInUp}
+                  whileHover={{ y: -8, boxShadow: "0 25px 50px -12px rgba(0, 33, 16, 0.1)" }}
+                  className={`${card.className} rounded-[1.5rem] p-6 sm:p-8 shadow-[0_12px_28px_rgb(0_33_16_/_0.05)] transition-all`}
                 >
                   <div
                     className={`mb-6 flex h-12 w-12 items-center justify-center rounded-[1rem] text-sm font-black tracking-[0.14em] ${
@@ -284,24 +332,41 @@ export default function Home() {
                     {card.description}
                   </p>
                   {card.footer}
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </section>
 
-        <section className="bg-surface px-6 py-20 sm:px-8 lg:py-32">
+        <section className="bg-surface px-6 py-20 sm:px-8 lg:py-32 overflow-hidden">
           <div className="mx-auto grid max-w-[1600px] grid-cols-1 items-center gap-12 md:grid-cols-2 lg:gap-24">
-            <div className="relative order-2 md:order-1 max-w-2xl mx-auto md:max-w-none">
+            <motion.div 
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, ease: EASING }}
+              className="relative order-2 md:order-1 max-w-2xl mx-auto md:max-w-none"
+            >
               <div className="absolute -left-10 -top-10 h-48 w-48 rounded-full bg-primary/5 blur-3xl" />
-              <Image
-                alt="Verification Process"
-                className="relative z-10 rounded-[2rem] shadow-[0_24px_48px_rgb(0_33_16_/_0.08)] w-full"
-                height={900}
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgxA_HT6c1AnRrkJNpCpmZiaN6oY3sJR47jk-CsRmHA-NpCjJIUKFfAKo48bR7XsciDhdzEaUTfeRzsw0R7aFOB4zNppTMZx6pzg1WCKZKES9QqIgkHiN_uthlvJ33xLShXlyYF3Pc6gDq27E1aE-HbQZP0Mr8aBje1-xD_SmfvXR17fqfxyVlOUoGFV4DIBvESViiUhFzIbCqgiQyLpso2_KgcvyX1AYi5DIklFBH1YNFF9AO0rXoxs-M9f1zotJP8flhopRzxTU"
-                width={1200}
-              />
-              <div className="absolute -bottom-6 right-4 sm:-right-6 z-20 rounded-[1.25rem] bg-surface-container-lowest p-4 sm:p-6 shadow-[0_16px_36px_rgb(0_33_16_/_0.08)]">
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.5, ease: EASING }}
+              >
+                <Image
+                  alt="Verification Process"
+                  className="relative z-10 rounded-[2rem] shadow-[0_24px_48px_rgb(0_33_16_/_0.08)] w-full"
+                  height={900}
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgxA_HT6c1AnRrkJNpCpmZiaN6oY3sJR47jk-CsRmHA-NpCjJIUKFfAKo48bR7XsciDhdzEaUTfeRzsw0R7aFOB4zNppTMZx6pzg1WCKZKES9QqIgkHiN_uthlvJ33xLShXlyYF3Pc6gDq27E1aE-HbQZP0Mr8aBje1-xD_SmfvXR17fqfxyVlOUoGFV4DIBvESViiUhFzIbCqgiQyLpso2_KgcvyX1AYi5DIklFBH1YNFF9AO0rXoxs-M9f1zotJP8flhopRzxTU"
+                  width={1200}
+                />
+              </motion.div>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5, duration: 0.6, ease: EASING }}
+                className="absolute -bottom-6 right-4 sm:-right-6 z-20 rounded-[1.25rem] bg-surface-container-lowest p-4 sm:p-6 shadow-[0_16px_36px_rgb(0_33_16_/_0.08)]"
+              >
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-tertiary-container font-bold text-on-tertiary-container">
                     ✓
@@ -315,10 +380,16 @@ export default function Home() {
                     </span>
                   </div>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
-            <div className="space-y-8 order-1 md:order-2 text-center md:text-left">
+            <motion.div 
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, ease: EASING }}
+              className="space-y-8 order-1 md:order-2 text-center md:text-left"
+            >
               <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black tracking-[-0.04em] text-on-surface">
                 Built on Pillars of <span className="text-primary">Truth</span>
               </h2>
@@ -329,8 +400,15 @@ export default function Home() {
               </p>
 
               <div className="space-y-6 text-left">
-                {trustPoints.map((point) => (
-                  <div key={point.title} className="flex items-start gap-4 max-w-xl mx-auto md:mx-0">
+                {trustPoints.map((point, index) => (
+                  <motion.div 
+                    key={point.title}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.2 + (index * 0.1), duration: 0.5, ease: EASING }}
+                    className="flex items-start gap-4 max-w-xl mx-auto md:mx-0"
+                  >
                     <div className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-secondary-container text-sm font-bold tracking-[0.12em] text-primary">
                       {point.accent}
                     </div>
@@ -342,17 +420,23 @@ export default function Home() {
                         {point.description}
                       </p>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
-            </div>
+            </motion.div>
           </div>
         </section>
 
         <section className="bg-on-background px-4 py-20 text-on-primary sm:px-8 lg:py-32">
-          <div className="mx-auto max-w-[1600px] overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,rgb(25_28_29),rgb(20_24_24))]">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.98 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.2, ease: EASING }}
+            className="mx-auto max-w-[1600px] overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,rgb(25_28_29),rgb(20_24_24))] shadow-2xl"
+          >
             <div
-              className="grid grid-cols-1 gap-12 p-6 sm:p-12 lg:grid-cols-2 lg:p-16 xl:p-24"
+              className="grid grid-cols-1 gap-12 p-6 sm:p-12 lg:grid-cols-2 lg:p-16 xl:p-24 relative"
               style={{
                 backgroundImage:
                   "linear-gradient(rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.02)), url('https://lh3.googleusercontent.com/aida-public/AB6AXuA7pOwsVZUE-iOoFLPhpdqjrYzxvbY_w56rB2-C3yRZu4xCL8DEdI8joO17Wh1HOoiHqFSzmFgENRIFHqgDnXLm706vXA44bwPodBmtP8mHLQj7uJAJOIP7zfjvIJdymCm-7tQ_T9Gkyjw8nYIDDYv9wSB9TIfVWawTtY_0DMVXUAV5I47t54BCZFoGrGi9s2wCbNI7-8ZLks63Skob3iSm9ADc_DK2mU-z6QfrwzkanT8_OzOCfqDWo_Z9sY9UonbVgxmLX6QKpIw')",
@@ -360,32 +444,55 @@ export default function Home() {
                 backgroundSize: "cover",
               }}
             >
-              <div className="text-center lg:text-left">
-                <h2 className="font-display text-3xl sm:text-4xl font-black tracking-[-0.04em] lg:text-5xl xl:text-6xl">
+              <div className="text-center lg:text-left relative z-10">
+                <motion.h2 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, ease: EASING }}
+                  className="font-display text-3xl sm:text-4xl font-black tracking-[-0.04em] lg:text-5xl xl:text-6xl"
+                >
                   Decipher the Law with AI
-                </h2>
-                <p className="mt-6 sm:mt-8 max-w-xl text-base sm:text-lg leading-relaxed sm:leading-8 text-white/80 mx-auto lg:mx-0">
+                </motion.h2>
+                <motion.p 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2, duration: 0.8, ease: EASING }}
+                  className="mt-6 sm:mt-8 max-w-xl text-base sm:text-lg leading-relaxed sm:leading-8 text-white/80 mx-auto lg:mx-0"
+                >
                   Don&apos;t get lost in legal jargon. Our AI Assistant translates
                   complex electoral acts into simple, actionable guidance tailored
                   to your specific situation.
-                </p>
+                </motion.p>
 
                 <div className="mt-10 space-y-4 text-left max-w-lg mx-auto lg:mx-0">
-                  {aiPrompts.map((prompt) => (
-                    <div
+                  {aiPrompts.map((prompt, index) => (
+                    <motion.div
                       key={prompt}
-                      className="flex items-center gap-4 rounded-[1rem] border border-white/5 bg-white/10 p-4 backdrop-blur-sm"
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.4 + (index * 0.1), duration: 0.5, ease: EASING }}
+                      whileHover={{ x: 10, backgroundColor: "rgba(255, 255, 255, 0.15)" }}
+                      className="flex items-center gap-4 rounded-[1rem] border border-white/5 bg-white/10 p-4 backdrop-blur-sm cursor-default"
                     >
                       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-xs sm:text-sm font-bold tracking-[0.12em] text-primary-fixed">
                         AI
                       </span>
                       <span className="text-sm">{prompt}</span>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </div>
 
-              <div className="rounded-[1.5rem] bg-surface-container-lowest p-6 sm:p-8 text-on-surface shadow-[0_24px_48px_rgb(0_0_0_/_0.24)] max-w-md mx-auto w-full lg:max-w-none lg:mx-0">
+              <motion.div 
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3, duration: 1, ease: EASING }}
+                className="rounded-[1.5rem] bg-surface-container-lowest p-6 sm:p-8 text-on-surface shadow-[0_24px_48px_rgb(0_0_0_/_0.24)] max-w-md mx-auto w-full lg:max-w-none lg:mx-0 relative z-10"
+              >
                 <div className="mb-8 flex items-center gap-3">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary font-bold text-on-primary">
                     AI
@@ -399,44 +506,64 @@ export default function Home() {
                 </div>
 
                 <div className="space-y-6">
-                  <div className="flex gap-3">
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.8, duration: 0.5, ease: EASING }}
+                    className="flex gap-3"
+                  >
                     <div className="max-w-[85%] rounded-[1rem] rounded-tl-none bg-surface-container-low p-4 text-sm leading-relaxed">
                       Hello! I&apos;m your VoteLens Assistant. How can I help you
                       navigate your civic duties today?
                     </div>
-                  </div>
+                  </motion.div>
 
-                  <div className="flex flex-col items-end gap-3">
-                    <div className="max-w-[85%] rounded-[1rem] rounded-tr-none bg-primary p-4 text-sm leading-relaxed text-on-primary">
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 1.2, duration: 0.5, ease: EASING }}
+                    className="flex flex-col items-end gap-3"
+                  >
+                    <div className="max-w-[85%] rounded-[1rem] rounded-tr-none bg-primary p-4 text-sm leading-relaxed text-on-primary shadow-lg">
                       I need to know the deadline for voter transfer.
                     </div>
-                  </div>
+                  </motion.div>
 
-                  <div className="flex gap-3">
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 1.6, duration: 0.5, ease: EASING }}
+                    className="flex gap-3"
+                  >
                     <div className="max-w-[85%] rounded-[1rem] rounded-tl-none bg-surface-container-low p-4 text-sm leading-relaxed">
                       The deadline for voter transfer for the next cycle is
                       currently scheduled for October 15th. Would you like me to
                       find your nearest center?
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
 
                 <div className="mt-8 flex gap-2 border-t border-outline-variant/10 pt-6">
                   <input
-                    className="flex-1 min-w-0 rounded-[0.75rem] bg-surface-container-low px-4 py-3 text-sm outline-none focus:outline-2 focus:outline-primary"
+                    className="flex-1 min-w-0 rounded-[0.75rem] bg-surface-container-low px-4 py-3 text-sm outline-none focus:outline-2 focus:outline-primary transition-all"
                     placeholder="Type your question..."
                     type="text"
                   />
-                  <button
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.75rem] bg-primary text-on-primary hover:brightness-110 active:scale-95 transition-all"
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[0.75rem] bg-primary text-on-primary hover:brightness-110 shadow-md"
                     type="button"
                   >
                     →
-                  </button>
+                  </motion.button>
                 </div>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </section>
       </main>
 

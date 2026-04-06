@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   User,
@@ -12,9 +13,7 @@ import {
   Route,
   Bot,
   Bell,
-  Search,
   Megaphone,
-  Verified,
   AlertTriangle,
   Calendar,
   ArrowRight,
@@ -33,21 +32,19 @@ import { Sidebar } from "../../../components/layout/Sidebar";
 import { Navbar } from "../../../components/layout/Navbar";
 import { Footer } from "../../../components/layout/Footer";
 
+const EASING = [0.16, 1, 0.3, 1] as [number, number, number, number];
+
 export default function NotificationsPage() {
   const router = useRouter();
   const [session, setSession] = useState<LocalSession | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const currentSession = getStoredSession();
     if (!currentSession) {
       router.replace("/");
     } else {
-      Promise.resolve().then(() => {
-        setSession(currentSession);
-        setIsLoading(false);
-      });
+      setSession(currentSession);
     }
   }, [router]);
 
@@ -56,17 +53,8 @@ export default function NotificationsPage() {
     router.push("/");
   };
 
-  if (isLoading || !session) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-surface">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="text-sm font-bold text-primary animate-pulse">
-            Authenticating...
-          </p>
-        </div>
-      </div>
-    );
+  if (!session) {
+    return null;
   }
 
   const navigation = [
@@ -81,8 +69,42 @@ export default function NotificationsPage() {
     { label: "Notifications", href: "/dashboard/notifications", active: true, icon: Bell },
   ];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: EASING },
+    },
+  };
+
+  const notificationVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: { 
+      opacity: 1, 
+      x: 0,
+      transition: { duration: 0.5, ease: EASING }
+    },
+    exit: { 
+      opacity: 0, 
+      x: 50, 
+      transition: { duration: 0.3, ease: "easeIn" as any } 
+    }
+  };
+
   return (
-    <div className="flex min-h-screen bg-surface text-on-surface">
+    <div className="flex min-h-screen bg-surface text-on-surface overflow-x-hidden">
       <Sidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
@@ -112,7 +134,7 @@ export default function NotificationsPage() {
         }
       />
 
-      <main className="flex min-h-screen flex-1 flex-col lg:ml-64">
+      <main className="flex min-h-screen flex-1 flex-col lg:ml-64 w-full max-w-full">
         <Navbar
           onMenuClick={() => setIsSidebarOpen(true)}
           branding={{ name: "VoteLens" }}
@@ -143,9 +165,14 @@ export default function NotificationsPage() {
           }
         />
 
-        <div className="p-4 sm:p-8 max-w-5xl mx-auto w-full flex-1 space-y-8">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="p-4 sm:p-8 max-w-5xl mx-auto w-full flex-1 space-y-8"
+        >
           {/* Filters & Header Section */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
               <h3 className="text-3xl font-black text-on-surface tracking-tight font-display">Inbox</h3>
               <p className="text-on-surface-variant text-sm font-medium mt-1">Stay informed with the latest updates from VoteLens and INEC.</p>
@@ -153,118 +180,179 @@ export default function NotificationsPage() {
             {/* Filter Tabs */}
             <div className="flex p-1 bg-surface-container-high rounded-xl w-full sm:w-fit overflow-x-auto no-scrollbar">
               <div className="flex min-w-max sm:min-w-0 w-full">
-                <button className="flex-1 sm:flex-none px-6 py-2 text-xs font-bold bg-white text-primary rounded-lg shadow-sm transition-all uppercase tracking-widest whitespace-nowrap">
+                <motion.button 
+                  whileTap={{ scale: 0.95 }}
+                  className="flex-1 sm:flex-none px-6 py-2 text-xs font-bold bg-white text-primary rounded-lg shadow-sm transition-all uppercase tracking-widest whitespace-nowrap"
+                >
                   All
-                </button>
-                <button className="flex-1 sm:flex-none px-6 py-2 text-xs font-bold text-on-surface-variant hover:text-on-surface transition-all uppercase tracking-widest whitespace-nowrap">
+                </motion.button>
+                <motion.button 
+                  whileTap={{ scale: 0.95 }}
+                  className="flex-1 sm:flex-none px-6 py-2 text-xs font-bold text-on-surface-variant hover:text-on-surface transition-all uppercase tracking-widest whitespace-nowrap"
+                >
                   Unread
-                </button>
-                <button className="flex-1 sm:flex-none px-6 py-2 text-xs font-bold text-on-surface-variant hover:text-on-surface transition-all uppercase tracking-widest whitespace-nowrap">
+                </motion.button>
+                <motion.button 
+                  whileTap={{ scale: 0.95 }}
+                  className="flex-1 sm:flex-none px-6 py-2 text-xs font-bold text-on-surface-variant hover:text-on-surface transition-all uppercase tracking-widest whitespace-nowrap"
+                >
                   Important
-                </button>
+                </motion.button>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Notifications List */}
           <div className="space-y-4">
-            {/* Alert Type: Announcement */}
-            <div className="group relative bg-surface-container-lowest rounded-2xl p-4 sm:p-6 transition-all duration-300 hover:shadow-civilized flex flex-col sm:flex-row items-start gap-4 sm:gap-5 border border-outline-variant/10">
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-1/2 bg-primary rounded-r-full hidden sm:block"></div>
-              <div className="w-12 h-12 shrink-0 rounded-xl bg-primary-container/10 flex items-center justify-center text-primary">
-                <Megaphone className="h-6 w-6" />
-              </div>
-              <div className="flex-1 w-full">
-                <div className="flex justify-between items-start mb-2">
-                  <span className="px-3 py-1 rounded-md text-[10px] font-black tracking-widest uppercase bg-secondary-container text-on-secondary-fixed-variant">Announcement</span>
-                  <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">2 hours ago</span>
+            <AnimatePresence mode="popLayout">
+              {/* Alert Type: Announcement */}
+              <motion.div 
+                variants={notificationVariants}
+                whileHover={{ x: 4, backgroundColor: "rgba(0, 107, 63, 0.02)" }}
+                className="group relative bg-surface-container-lowest rounded-2xl p-4 sm:p-6 transition-all duration-300 hover:shadow-civilized flex flex-col sm:flex-row items-start gap-4 sm:gap-5 border border-outline-variant/10 overflow-hidden"
+              >
+                <motion.div 
+                  initial={{ height: 0 }}
+                  animate={{ height: "50%" }}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 bg-primary rounded-r-full hidden sm:block"
+                ></motion.div>
+                <div className="w-12 h-12 shrink-0 rounded-xl bg-primary-container/10 flex items-center justify-center text-primary">
+                  <Megaphone className="h-6 w-6" />
                 </div>
-                <h4 className="text-lg font-bold text-on-surface mb-2 font-display">New Polling Unit Relocation Guidelines</h4>
-                <p className="text-on-surface-variant text-sm leading-relaxed mb-4">INEC has updated the procedures for polling unit transfers ahead of the upcoming municipal elections. Ensure your PVC is mapped to the correct ward.</p>
-                <div className="flex items-center gap-4">
-                  <button className="text-primary font-bold text-xs flex items-center gap-1.5 hover:underline uppercase tracking-widest">
-                    Read Full Guide
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </button>
-                  <button className="text-on-surface-variant hover:text-primary transition-colors p-1">
-                    <Archive className="h-4 w-4" />
-                  </button>
+                <div className="flex-1 w-full">
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="px-3 py-1 rounded-md text-[10px] font-black tracking-widest uppercase bg-secondary-container text-on-secondary-fixed-variant">Announcement</span>
+                    <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">2 hours ago</span>
+                  </div>
+                  <h4 className="text-lg font-bold text-on-surface mb-2 font-display">New Polling Unit Relocation Guidelines</h4>
+                  <p className="text-on-surface-variant text-sm leading-relaxed mb-4">INEC has updated the procedures for polling unit transfers ahead of the upcoming municipal elections. Ensure your PVC is mapped to the correct ward.</p>
+                  <div className="flex items-center gap-4">
+                    <motion.button 
+                      whileHover={{ x: 3 }}
+                      className="text-primary font-bold text-xs flex items-center gap-1.5 hover:underline uppercase tracking-widest"
+                    >
+                      Read Full Guide
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </motion.button>
+                    <motion.button 
+                      whileHover={{ scale: 1.1, color: "var(--primary)" }}
+                      className="text-on-surface-variant transition-colors p-1"
+                    >
+                      <Archive className="h-4 w-4" />
+                    </motion.button>
+                  </div>
                 </div>
-              </div>
-            </div>
+              </motion.div>
 
-            {/* Alert Type: Verification */}
-            <div className="group bg-surface-container-lowest rounded-2xl p-4 sm:p-6 transition-all duration-300 hover:shadow-civilized flex flex-col sm:flex-row items-start gap-4 sm:gap-5 border border-outline-variant/10">
-              <div className="w-12 h-12 shrink-0 rounded-xl bg-tertiary-container/10 flex items-center justify-center text-tertiary">
-                <ShieldCheck className="h-6 w-6" />
-              </div>
-              <div className="flex-1 w-full">
-                <div className="flex justify-between items-start mb-2">
-                  <span className="px-3 py-1 rounded-md text-[10px] font-black tracking-widest uppercase bg-tertiary-container text-on-tertiary-container">Verification Success</span>
-                  <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">Yesterday</span>
+              {/* Alert Type: Verification */}
+              <motion.div 
+                variants={notificationVariants}
+                whileHover={{ x: 4, backgroundColor: "rgba(0, 107, 63, 0.02)" }}
+                className="group bg-surface-container-lowest rounded-2xl p-4 sm:p-6 transition-all duration-300 hover:shadow-civilized flex flex-col sm:flex-row items-start gap-4 sm:gap-5 border border-outline-variant/10"
+              >
+                <div className="w-12 h-12 shrink-0 rounded-xl bg-tertiary-container/10 flex items-center justify-center text-tertiary">
+                  <ShieldCheck className="h-6 w-6" />
                 </div>
-                <h4 className="text-lg font-bold text-on-surface mb-2 font-display">PVC Information Successfully Validated</h4>
-                <p className="text-on-surface-variant text-sm leading-relaxed mb-4">Your voter identification details have been matched with the national database. You are now cleared for the civic journey phase.</p>
-                <div className="flex items-center gap-4">
-                  <button 
-                    onClick={() => router.push("/dashboard/profile")}
-                    className="text-primary font-bold text-xs flex items-center gap-1.5 hover:underline uppercase tracking-widest"
+                <div className="flex-1 w-full">
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="px-3 py-1 rounded-md text-[10px] font-black tracking-widest uppercase bg-tertiary-container text-on-tertiary-container">Verification Success</span>
+                    <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">Yesterday</span>
+                  </div>
+                  <h4 className="text-lg font-bold text-on-surface mb-2 font-display">PVC Information Successfully Validated</h4>
+                  <p className="text-on-surface-variant text-sm leading-relaxed mb-4">Your voter identification details have been matched with the national database. You are now cleared for the civic journey phase.</p>
+                  <div className="flex items-center gap-4">
+                    <motion.button 
+                      whileHover={{ x: 3 }}
+                      onClick={() => router.push("/dashboard/profile")}
+                      className="text-primary font-bold text-xs flex items-center gap-1.5 hover:underline uppercase tracking-widest"
+                    >
+                      View Profile
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </motion.button>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Alert Type: Urgent Alert */}
+              <motion.div 
+                variants={notificationVariants}
+                whileHover={{ x: 4, backgroundColor: "rgba(186, 26, 26, 0.02)" }}
+                className="group bg-surface-container-lowest rounded-2xl p-4 sm:p-6 transition-all duration-300 hover:shadow-civilized flex flex-col sm:flex-row items-start gap-4 sm:gap-5 border border-outline-variant/10"
+              >
+                <div className="w-12 h-12 shrink-0 rounded-xl bg-error-container/10 flex items-center justify-center text-error">
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ repeat: Infinity, duration: 2 }}
                   >
-                    View Profile
-                    <ExternalLink className="h-3.5 w-3.5" />
-                  </button>
+                    <AlertTriangle className="h-6 w-6" />
+                  </motion.div>
                 </div>
-              </div>
-            </div>
+                <div className="flex-1 w-full">
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="px-3 py-1 rounded-md text-[10px] font-black tracking-widest uppercase bg-error-container text-on-error-container">Urgent Alert</span>
+                    <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">Mar 12, 2024</span>
+                  </div>
+                  <h4 className="text-lg font-bold text-on-surface mb-2 font-display">Security Update: Action Required</h4>
+                  <p className="text-on-surface-variant text-sm leading-relaxed mb-4">A new login was detected from a Chrome browser on Windows in Abuja. If this wasn&apos;t you, please secure your account immediately.</p>
+                  <div className="flex flex-wrap items-center gap-4">
+                    <motion.button 
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="bg-error text-on-error px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition-opacity shadow-md shadow-error/10 w-full sm:w-auto text-center"
+                    >
+                      Secure Account
+                    </motion.button>
+                    <motion.button 
+                      whileHover={{ color: "var(--on-surface)" }}
+                      className="text-on-surface-variant font-black text-[10px] uppercase tracking-widest transition-colors px-4 py-2 w-full sm:w-auto text-center"
+                    >
+                      I recognize this
+                    </motion.button>
+                  </div>
+                </div>
+              </motion.div>
 
-            {/* Alert Type: Urgent Alert */}
-            <div className="group bg-surface-container-lowest rounded-2xl p-4 sm:p-6 transition-all duration-300 hover:shadow-civilized flex flex-col sm:flex-row items-start gap-4 sm:gap-5 border border-outline-variant/10">
-              <div className="w-12 h-12 shrink-0 rounded-xl bg-error-container/10 flex items-center justify-center text-error">
-                <AlertTriangle className="h-6 w-6" />
-              </div>
-              <div className="flex-1 w-full">
-                <div className="flex justify-between items-start mb-2">
-                  <span className="px-3 py-1 rounded-md text-[10px] font-black tracking-widest uppercase bg-error-container text-on-error-container">Urgent Alert</span>
-                  <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">Mar 12, 2024</span>
+              {/* Alert Type: Reminder */}
+              <motion.div 
+                variants={notificationVariants}
+                className="group bg-surface-container-lowest/50 rounded-2xl p-4 sm:p-6 border border-dashed border-outline-variant/20 transition-all duration-300 flex flex-col sm:flex-row items-start gap-4 sm:gap-5 opacity-80"
+              >
+                <div className="w-12 h-12 shrink-0 rounded-xl bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+                  <Calendar className="h-6 w-6" />
                 </div>
-                <h4 className="text-lg font-bold text-on-surface mb-2 font-display">Security Update: Action Required</h4>
-                <p className="text-on-surface-variant text-sm leading-relaxed mb-4">A new login was detected from a Chrome browser on Windows in Abuja. If this wasn&apos;t you, please secure your account immediately.</p>
-                <div className="flex flex-wrap items-center gap-4">
-                  <button className="bg-error text-on-error px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition-opacity shadow-md shadow-error/10 w-full sm:w-auto text-center">
-                    Secure Account
-                  </button>
-                  <button className="text-on-surface-variant font-black text-[10px] uppercase tracking-widest hover:text-on-surface px-4 py-2 w-full sm:w-auto text-center">
-                    I recognize this
-                  </button>
+                <div className="flex-1 w-full">
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="px-3 py-1 rounded-md text-[10px] font-black tracking-widest uppercase bg-surface-container text-on-surface-variant">Upcoming</span>
+                    <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">Mar 10, 2024</span>
+                  </div>
+                  <h4 className="text-lg font-bold text-on-surface mb-2 font-display">Voter Registration Deadline Approaching</h4>
+                  <p className="text-on-surface-variant text-sm leading-relaxed italic">The window for new registrations in your current district closes in 5 days. Ensure all friends and family are enrolled.</p>
                 </div>
-              </div>
-            </div>
-
-            {/* Alert Type: Reminder */}
-            <div className="group bg-surface-container-lowest/50 rounded-2xl p-4 sm:p-6 border border-dashed border-outline-variant/20 transition-all duration-300 flex flex-col sm:flex-row items-start gap-4 sm:gap-5 opacity-80">
-              <div className="w-12 h-12 shrink-0 rounded-xl bg-surface-container-high flex items-center justify-center text-on-surface-variant">
-                <Calendar className="h-6 w-6" />
-              </div>
-              <div className="flex-1 w-full">
-                <div className="flex justify-between items-start mb-2">
-                  <span className="px-3 py-1 rounded-md text-[10px] font-black tracking-widest uppercase bg-surface-container text-on-surface-variant">Upcoming</span>
-                  <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">Mar 10, 2024</span>
-                </div>
-                <h4 className="text-lg font-bold text-on-surface mb-2 font-display">Voter Registration Deadline Approaching</h4>
-                <p className="text-on-surface-variant text-sm leading-relaxed italic">The window for new registrations in your current district closes in 5 days. Ensure all friends and family are enrolled.</p>
-              </div>
-            </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
 
           {/* Empty State / Load More */}
-          <div className="mt-12 flex flex-col items-center">
-            <div className="w-16 h-1 bg-surface-container-high rounded-full mb-8"></div>
-            <button className="flex items-center gap-2 px-8 py-3 bg-surface-container-lowest text-primary font-black text-[10px] uppercase tracking-widest rounded-full shadow-civilized hover:shadow-glass transition-all active:scale-95 border border-outline-variant/5">
+          <motion.div 
+            variants={itemVariants}
+            className="mt-12 flex flex-col items-center"
+          >
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: "4rem" }}
+              transition={{ delay: 1, duration: 0.8 }}
+              className="h-1 bg-surface-container-high rounded-full mb-8"
+            ></motion.div>
+            <motion.button 
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-2 px-8 py-3 bg-surface-container-lowest text-primary font-black text-[10px] uppercase tracking-widest rounded-full shadow-civilized hover:shadow-glass transition-all border border-outline-variant/5"
+            >
               Load Older Notifications
               <ChevronDown className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
+            </motion.button>
+          </motion.div>
+        </motion.div>
 
         <Footer
           branding={{ name: "VoteLens", tagline: "Nigeria" }}
@@ -279,12 +367,22 @@ export default function NotificationsPage() {
       </main>
 
       {/* Floating AI Assistant */}
-      <button 
+      <motion.button 
+        initial={{ scale: 0, rotate: -180 }}
+        animate={{ scale: 1, rotate: 0 }}
+        whileHover={{ scale: 1.1, rotate: 10 }}
+        whileTap={{ scale: 0.9 }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 260, 
+          damping: 20,
+          delay: 1.5
+        }}
         onClick={() => router.push("/dashboard/ai-assistant")}
-        className="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50"
+        className="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center z-50"
       >
         <Bot className="h-6 w-6" />
-      </button>
+      </motion.button>
     </div>
   );
 }

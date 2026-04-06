@@ -14,12 +14,31 @@ import {
   Bot,
   Bell,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   getStoredSession,
   clearStoredSession,
   getInitials,
   type LocalSession,
 } from "../../lib/local-auth";
+
+// Animation Constants
+const EASING: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const DURATION = 0.6;
+
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: DURATION, ease: EASING },
+};
+
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
 import { Sidebar } from "../../components/layout/Sidebar";
 import { Navbar } from "../../components/layout/Navbar";
 import { Footer } from "../../components/layout/Footer";
@@ -145,9 +164,17 @@ export default function DashboardPage() {
           }
         />
 
-        <div className="p-4 sm:p-8 space-y-8 max-w-[1600px] mx-auto w-full">
+        <motion.div 
+          initial="initial"
+          animate="animate"
+          variants={staggerContainer}
+          className="p-4 sm:p-8 space-y-8 max-w-[1600px] mx-auto w-full"
+        >
           {/* Welcome Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <motion.div 
+            variants={fadeInUp}
+            className="flex flex-col md:flex-row md:items-end justify-between gap-4"
+          >
             <div>
               <h2 className="text-3xl sm:text-4xl font-black font-display text-on-surface tracking-tight">
                 Welcome, {session.fullName.split(" ")[0]}
@@ -158,23 +185,35 @@ export default function DashboardPage() {
             </div>
             <div className="flex items-center space-x-3">
               <span className="text-sm font-medium text-on-surface-variant">Election Countdown:</span>
-              <div className="bg-surface-container-lowest px-4 py-2 rounded-xl shadow-civilized border border-outline-variant/10">
+              <motion.div 
+                whileHover={{ scale: 1.05 }}
+                className="bg-surface-container-lowest px-4 py-2 rounded-xl shadow-civilized border border-outline-variant/10"
+              >
                 <span className="text-primary font-black text-lg">142</span>
                 <span className="ml-2 text-[10px] uppercase text-on-surface-variant font-bold tracking-widest">Days</span>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Bento Grid Dashboard */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
             {/* Main Status Card */}
-            <div className="md:col-span-8 bg-surface-container-lowest rounded-xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden group shadow-civilized">
+            <motion.div 
+              variants={fadeInUp}
+              whileHover={{ y: -4 }}
+              className="md:col-span-8 bg-surface-container-lowest rounded-xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden group shadow-civilized border border-outline-variant/5"
+            >
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-20 -mt-20 blur-3xl transition-colors duration-500 group-hover:bg-primary/10"></div>
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-6">
-                  <span className="px-4 py-1.5 bg-tertiary-container text-on-tertiary-container rounded-lg text-xs font-bold flex items-center gap-2">
+                  <motion.span 
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.6, duration: 0.4 }}
+                    className="px-4 py-1.5 bg-tertiary-container text-on-tertiary-container rounded-lg text-xs font-bold flex items-center gap-2"
+                  >
                     <span className="text-[14px]">✓</span> PVC VERIFIED
-                  </span>
+                  </motion.span>
                   <span className="text-on-surface-variant text-xs font-medium">Updated: 2 hours ago</span>
                 </div>
                 <div className="space-y-4">
@@ -186,18 +225,30 @@ export default function DashboardPage() {
                     ["VIN Number", "90F5 **** 2281"],
                     ["State/LGA", "Lagos / Eti-Osa"],
                     ["Last Validated", "Oct 24, 2024"],
-                  ].map(([label, value]) => (
-                    <div key={label} className="bg-surface-container-low p-4 rounded-xl border border-outline-variant/5">
+                  ].map(([label, value], idx) => (
+                    <motion.div 
+                      key={label} 
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.8 + idx * 0.1 }}
+                      className="bg-surface-container-low p-4 rounded-xl border border-outline-variant/5"
+                    >
                       <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-1">{label}</p>
                       <p className="font-bold text-on-surface">{value}</p>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Quick Action Card */}
-            <div className="md:col-span-4 bg-primary p-6 sm:p-8 rounded-xl text-on-primary shadow-lg shadow-primary/20 flex flex-col justify-between h-full group cursor-pointer overflow-hidden relative">
+            <motion.div 
+              variants={fadeInUp}
+              whileHover={{ y: -4, scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => router.push("/dashboard/polling-unit")}
+              className="md:col-span-4 bg-primary p-6 sm:p-8 rounded-xl text-on-primary shadow-lg shadow-primary/20 flex flex-col justify-between h-full group cursor-pointer overflow-hidden relative"
+            >
               <div className="absolute bottom-0 right-0 p-2 opacity-10 translate-y-4 group-hover:translate-y-0 transition-transform">
                 <span className="text-8xl">📍</span>
               </div>
@@ -207,12 +258,22 @@ export default function DashboardPage() {
               </div>
               <div className="mt-8 flex items-center justify-between relative z-10">
                 <span className="text-sm font-bold border-b border-primary-fixed">Get Directions</span>
-                <span className="text-xl">→</span>
+                <motion.span 
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                  className="text-xl"
+                >
+                  →
+                </motion.span>
               </div>
-            </div>
+            </motion.div>
 
             {/* Polling Unit Map Snippet */}
-            <div className="md:col-span-4 bg-surface-container-lowest rounded-xl p-6 shadow-civilized">
+            <motion.div 
+              variants={fadeInUp}
+              whileHover={{ y: -4 }}
+              className="md:col-span-4 bg-surface-container-lowest rounded-xl p-6 shadow-civilized border border-outline-variant/5"
+            >
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-sm font-bold text-primary font-display uppercase tracking-widest">Polling Unit 012</h4>
                 <span className="text-on-surface-variant">•••</span>
@@ -220,7 +281,7 @@ export default function DashboardPage() {
               <div className="h-40 rounded-xl overflow-hidden mb-4 relative bg-surface-container-low">
                 <Image
                   alt="Polling Unit Map"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                   height={300}
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmoyU5E5exK2IIxHvaDQXTdpi4Ll2OAIBC79UPLoa2f5qQ87FRH6I1sDwmoVI9nMxAZUYKX6vsdYy1Y9l94ULLEAnd5Flu-OzITOEdCDDkatCKtpM6E5giCTIbsqFQCABsKyVT7QHfcJu9KWQ9DsDM5X90DaX0L-xCMA7Z-TcCbcvoTBjmHFd0oouVSoUpX5CD9pvCzIA2bOADlPi5vEeG8lOWdvAAX9Rxrlexym98rc-53Da10RnXQb-3LFxdghhMv5Gd5urDBfA"
                   width={400}
@@ -233,10 +294,14 @@ export default function DashboardPage() {
               </div>
               <p className="text-sm font-bold">Victoria Island Primary School</p>
               <p className="text-xs text-on-surface-variant mt-1">Block B, Gate 2 Entrance</p>
-            </div>
+            </motion.div>
 
             {/* Civic Timeline */}
-            <div className="md:col-span-5 bg-surface-container-lowest rounded-xl p-6 shadow-civilized">
+            <motion.div 
+              variants={fadeInUp}
+              whileHover={{ y: -4 }}
+              className="md:col-span-5 bg-surface-container-lowest rounded-xl p-6 shadow-civilized border border-outline-variant/5"
+            >
               <h4 className="text-sm font-bold text-primary font-display uppercase tracking-widest mb-6">Recent Civic Activity</h4>
               <div className="space-y-6">
                 {[
@@ -244,23 +309,38 @@ export default function DashboardPage() {
                   { title: "Candidate Profile View", desc: "You compared 3 gubernatorial candidates for the Lagos 2025 cycle.", time: "3 DAYS AGO" },
                   { title: "Town Hall Participation", desc: "Attended 'Civic Tech for Accountability' digital summit.", time: "1 WEEK AGO" },
                 ].map((item, idx) => (
-                  <div key={idx} className="flex gap-4">
+                  <motion.div 
+                    key={idx} 
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.6 + idx * 0.1 }}
+                    className="flex gap-4 group"
+                  >
                     <div className="flex flex-col items-center">
-                      <div className="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-primary font-bold">✓</div>
+                      <motion.div 
+                        whileHover={{ scale: 1.2 }}
+                        className="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-primary font-bold shadow-sm"
+                      >
+                        ✓
+                      </motion.div>
                       {idx !== 2 && <div className="w-0.5 h-full bg-outline-variant/10 my-1"></div>}
                     </div>
                     <div className="pb-2">
-                      <p className="text-sm font-bold">{item.title}</p>
+                      <p className="text-sm font-bold group-hover:text-primary transition-colors">{item.title}</p>
                       <p className="text-xs text-on-surface-variant mt-1">{item.desc}</p>
                       <p className="text-[10px] text-on-surface-variant/60 mt-2 font-bold">{item.time}</p>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
-            </div>
+            </motion.div>
 
             {/* Upcoming Election Metric */}
-            <div className="md:col-span-3 bg-surface-container-high rounded-xl p-6 flex flex-col justify-between shadow-civilized">
+            <motion.div 
+              variants={fadeInUp}
+              whileHover={{ y: -4 }}
+              className="md:col-span-3 bg-surface-container-high rounded-xl p-6 flex flex-col justify-between shadow-civilized border border-outline-variant/5"
+            >
               <div>
                 <h4 className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-4">Upcoming</h4>
                 <div className="space-y-1">
@@ -274,60 +354,90 @@ export default function DashboardPage() {
                   <span className="text-[10px] font-bold text-primary">65%</span>
                 </div>
                 <div className="w-full h-2 bg-surface-container-lowest rounded-full overflow-hidden">
-                  <div className="h-full bg-primary w-[65%] rounded-full"></div>
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: "65%" }}
+                    transition={{ delay: 1, duration: 1.5, ease: EASING }}
+                    className="h-full bg-primary rounded-full"
+                  ></motion.div>
                 </div>
                 <p className="text-[10px] text-on-surface-variant mt-4 leading-relaxed font-medium">
                   Voter engagement in your PU is higher than the state average of 42%.
                 </p>
               </div>
-            </div>
+            </motion.div>
           </div>
 
           {/* Detailed Grid Section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Informational Card */}
-            <div className="bg-surface-container-lowest p-6 rounded-xl shadow-civilized border border-outline-variant/5">
+            <motion.div 
+              variants={fadeInUp}
+              whileHover={{ y: -4 }}
+              className="bg-surface-container-lowest p-6 rounded-xl shadow-civilized border border-outline-variant/5"
+            >
               <div className="w-12 h-12 bg-secondary-container rounded-xl flex items-center justify-center mb-4 text-primary text-xl font-bold">📖</div>
               <h5 className="text-lg font-bold font-display mb-2">Voter Rights Handbook</h5>
               <p className="text-sm text-on-surface-variant leading-relaxed">Know your rights at the polling unit and understand the 2022 Electoral Act provisions for transparency.</p>
-              <button className="mt-6 text-primary font-bold text-sm flex items-center gap-2 hover:gap-3 transition-all">
-                Download PDF ↗
+              <button className="mt-6 text-primary font-bold text-sm flex items-center gap-2 hover:gap-3 transition-all group">
+                Download PDF <span className="group-hover:translate-x-1 transition-transform">↗</span>
               </button>
-            </div>
+            </motion.div>
 
             {/* AI Assistant Prompt */}
-            <div className="bg-surface-container-lowest p-6 rounded-xl shadow-civilized border border-outline-variant/5">
+            <motion.div 
+              variants={fadeInUp}
+              whileHover={{ y: -4 }}
+              className="bg-surface-container-lowest p-6 rounded-xl shadow-civilized border border-outline-variant/5"
+            >
               <div className="w-12 h-12 bg-primary-container/10 rounded-xl flex items-center justify-center mb-4 text-primary text-xl font-bold">🤖</div>
               <h5 className="text-lg font-bold font-display mb-2">Ask Lens AI</h5>
               <p className="text-sm text-on-surface-variant leading-relaxed">Get instant, verified answers about electoral laws, polling locations, or registration requirements.</p>
               <div className="mt-6 flex gap-2">
-                <input className="flex-1 text-xs bg-surface-container-low border-none rounded-lg focus:ring-1 focus:ring-primary px-4" placeholder="What is a VIN?" type="text" />
-                <button className="p-2 bg-primary text-on-primary rounded-lg shadow-md transition-transform active:scale-95">
+                <input className="flex-1 text-xs bg-surface-container-low border-none rounded-lg focus:ring-1 focus:ring-primary px-4 outline-none transition-all" placeholder="What is a VIN?" type="text" />
+                <motion.button 
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => router.push("/dashboard/ai-assistant")}
+                  className="p-2 bg-primary text-on-primary rounded-lg shadow-md transition-transform"
+                >
                   →
-                </button>
+                </motion.button>
               </div>
-            </div>
+            </motion.div>
 
             {/* Verified Profile Card */}
-            <div className="bg-surface-container-lowest p-6 rounded-xl shadow-civilized border border-outline-variant/5 flex items-center gap-4">
+            <motion.div 
+              variants={fadeInUp}
+              whileHover={{ y: -4 }}
+              className="bg-surface-container-lowest p-6 rounded-xl shadow-civilized border border-outline-variant/5 flex items-center gap-4 overflow-hidden relative"
+            >
               <div className="flex-1">
                 <h5 className="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter mb-1">Account Shield</h5>
                 <p className="text-lg font-bold font-display text-on-surface">Two-Factor Active</p>
                 <p className="text-xs text-on-surface-variant mt-1">Your biometric data is encrypted.</p>
-                <button className="mt-4 px-4 py-1.5 border border-outline-variant/20 text-[10px] font-bold rounded-lg hover:bg-surface-container-low transition-colors">
-                  MANAGE SECURITY
+                <button className="mt-4 px-4 py-1.5 border border-outline-variant/20 text-[10px] font-bold rounded-lg hover:bg-surface-container-low transition-colors uppercase tracking-widest">
+                  Manage Security
                 </button>
               </div>
-              <div className="w-20 h-20 relative">
+              <div className="w-20 h-20 relative shrink-0">
                 <svg className="w-full h-full text-primary" viewBox="0 0 36 36">
                   <path className="stroke-current opacity-10" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" strokeWidth="3"></path>
-                  <path className="stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" strokeDasharray="100, 100" strokeWidth="3"></path>
+                  <motion.path 
+                    initial={{ strokeDasharray: "0, 100" }}
+                    animate={{ strokeDasharray: "100, 100" }}
+                    transition={{ delay: 1.2, duration: 1.5, ease: EASING }}
+                    className="stroke-current" 
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" 
+                    fill="none" 
+                    strokeWidth="3"
+                  ></motion.path>
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center text-[10px] font-black">100%</div>
               </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
 
         <Footer
           branding={{ name: "VoteLens", tagline: "Nigeria" }}
