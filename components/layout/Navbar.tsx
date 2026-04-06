@@ -32,7 +32,7 @@ export const Navbar = ({
           </Link>
 
           {showSearch && (
-            <div className="relative w-full hidden xs:block">
+            <div className="relative w-full hidden sm:block">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" aria-hidden="true">
                 ⌕
               </span>

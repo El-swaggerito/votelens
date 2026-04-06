@@ -151,28 +151,30 @@ export default function NotificationsPage() {
               <p className="text-on-surface-variant text-sm font-medium mt-1">Stay informed with the latest updates from VoteLens and INEC.</p>
             </div>
             {/* Filter Tabs */}
-            <div className="flex p-1 bg-surface-container-high rounded-xl w-fit">
-              <button className="px-6 py-2 text-xs font-bold bg-white text-primary rounded-lg shadow-sm transition-all uppercase tracking-widest">
-                All
-              </button>
-              <button className="px-6 py-2 text-xs font-bold text-on-surface-variant hover:text-on-surface transition-all uppercase tracking-widest">
-                Unread
-              </button>
-              <button className="px-6 py-2 text-xs font-bold text-on-surface-variant hover:text-on-surface transition-all uppercase tracking-widest">
-                Important
-              </button>
+            <div className="flex p-1 bg-surface-container-high rounded-xl w-full sm:w-fit overflow-x-auto no-scrollbar">
+              <div className="flex min-w-max sm:min-w-0 w-full">
+                <button className="flex-1 sm:flex-none px-6 py-2 text-xs font-bold bg-white text-primary rounded-lg shadow-sm transition-all uppercase tracking-widest whitespace-nowrap">
+                  All
+                </button>
+                <button className="flex-1 sm:flex-none px-6 py-2 text-xs font-bold text-on-surface-variant hover:text-on-surface transition-all uppercase tracking-widest whitespace-nowrap">
+                  Unread
+                </button>
+                <button className="flex-1 sm:flex-none px-6 py-2 text-xs font-bold text-on-surface-variant hover:text-on-surface transition-all uppercase tracking-widest whitespace-nowrap">
+                  Important
+                </button>
+              </div>
             </div>
           </div>
 
           {/* Notifications List */}
           <div className="space-y-4">
             {/* Alert Type: Announcement */}
-            <div className="group relative bg-surface-container-lowest rounded-2xl p-6 transition-all duration-300 hover:shadow-civilized flex items-start gap-5 border border-outline-variant/10">
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-1/2 bg-primary rounded-r-full"></div>
+            <div className="group relative bg-surface-container-lowest rounded-2xl p-4 sm:p-6 transition-all duration-300 hover:shadow-civilized flex flex-col sm:flex-row items-start gap-4 sm:gap-5 border border-outline-variant/10">
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-1/2 bg-primary rounded-r-full hidden sm:block"></div>
               <div className="w-12 h-12 shrink-0 rounded-xl bg-primary-container/10 flex items-center justify-center text-primary">
                 <Megaphone className="h-6 w-6" />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 w-full">
                 <div className="flex justify-between items-start mb-2">
                   <span className="px-3 py-1 rounded-md text-[10px] font-black tracking-widest uppercase bg-secondary-container text-on-secondary-fixed-variant">Announcement</span>
                   <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">2 hours ago</span>
@@ -192,11 +194,11 @@ export default function NotificationsPage() {
             </div>
 
             {/* Alert Type: Verification */}
-            <div className="group bg-surface-container-lowest rounded-2xl p-6 transition-all duration-300 hover:shadow-civilized flex items-start gap-5 border border-outline-variant/10">
+            <div className="group bg-surface-container-lowest rounded-2xl p-4 sm:p-6 transition-all duration-300 hover:shadow-civilized flex flex-col sm:flex-row items-start gap-4 sm:gap-5 border border-outline-variant/10">
               <div className="w-12 h-12 shrink-0 rounded-xl bg-tertiary-container/10 flex items-center justify-center text-tertiary">
                 <ShieldCheck className="h-6 w-6" />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 w-full">
                 <div className="flex justify-between items-start mb-2">
                   <span className="px-3 py-1 rounded-md text-[10px] font-black tracking-widest uppercase bg-tertiary-container text-on-tertiary-container">Verification Success</span>
                   <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">Yesterday</span>
@@ -216,22 +218,22 @@ export default function NotificationsPage() {
             </div>
 
             {/* Alert Type: Urgent Alert */}
-            <div className="group bg-surface-container-lowest rounded-2xl p-6 transition-all duration-300 hover:shadow-civilized flex items-start gap-5 border border-outline-variant/10">
+            <div className="group bg-surface-container-lowest rounded-2xl p-4 sm:p-6 transition-all duration-300 hover:shadow-civilized flex flex-col sm:flex-row items-start gap-4 sm:gap-5 border border-outline-variant/10">
               <div className="w-12 h-12 shrink-0 rounded-xl bg-error-container/10 flex items-center justify-center text-error">
                 <AlertTriangle className="h-6 w-6" />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 w-full">
                 <div className="flex justify-between items-start mb-2">
                   <span className="px-3 py-1 rounded-md text-[10px] font-black tracking-widest uppercase bg-error-container text-on-error-container">Urgent Alert</span>
                   <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">Mar 12, 2024</span>
                 </div>
                 <h4 className="text-lg font-bold text-on-surface mb-2 font-display">Security Update: Action Required</h4>
                 <p className="text-on-surface-variant text-sm leading-relaxed mb-4">A new login was detected from a Chrome browser on Windows in Abuja. If this wasn&apos;t you, please secure your account immediately.</p>
-                <div className="flex items-center gap-4">
-                  <button className="bg-error text-on-error px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition-opacity shadow-md shadow-error/10">
+                <div className="flex flex-wrap items-center gap-4">
+                  <button className="bg-error text-on-error px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:opacity-90 transition-opacity shadow-md shadow-error/10 w-full sm:w-auto text-center">
                     Secure Account
                   </button>
-                  <button className="text-on-surface-variant font-black text-[10px] uppercase tracking-widest hover:text-on-surface px-4 py-2">
+                  <button className="text-on-surface-variant font-black text-[10px] uppercase tracking-widest hover:text-on-surface px-4 py-2 w-full sm:w-auto text-center">
                     I recognize this
                   </button>
                 </div>
@@ -239,11 +241,11 @@ export default function NotificationsPage() {
             </div>
 
             {/* Alert Type: Reminder */}
-            <div className="group bg-surface-container-lowest/50 rounded-2xl p-6 border border-dashed border-outline-variant/20 transition-all duration-300 flex items-start gap-5 opacity-80">
+            <div className="group bg-surface-container-lowest/50 rounded-2xl p-4 sm:p-6 border border-dashed border-outline-variant/20 transition-all duration-300 flex flex-col sm:flex-row items-start gap-4 sm:gap-5 opacity-80">
               <div className="w-12 h-12 shrink-0 rounded-xl bg-surface-container-high flex items-center justify-center text-on-surface-variant">
                 <Calendar className="h-6 w-6" />
               </div>
-              <div className="flex-1">
+              <div className="flex-1 w-full">
                 <div className="flex justify-between items-start mb-2">
                   <span className="px-3 py-1 rounded-md text-[10px] font-black tracking-widest uppercase bg-surface-container text-on-surface-variant">Upcoming</span>
                   <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">Mar 10, 2024</span>

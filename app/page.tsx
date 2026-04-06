@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   clearStoredSession,
   getInitials,
@@ -11,6 +12,24 @@ import {
 } from "../lib/local-auth";
 import { Navbar } from "../components/layout/Navbar";
 import { Footer } from "../components/layout/Footer";
+
+// Senior-level Animation Constants
+const EASING = [0.16, 1, 0.3, 1]; // Custom cubic-bezier for professional feel
+const DURATION = 0.8;
+
+const fadeInUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: DURATION, ease: EASING },
+};
+
+const staggerContainer = {
+  animate: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
 
 const featureCards = [
   {

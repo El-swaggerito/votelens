@@ -111,7 +111,7 @@ export default function ElectionHistoryPage() {
         }
       />
 
-      <main className="flex min-h-screen flex-1 flex-col lg:ml-64">
+      <main className="flex min-h-screen flex-1 flex-col lg:ml-64 w-full max-w-full overflow-x-hidden">
         <Navbar
           onMenuClick={() => setIsSidebarOpen(true)}
           branding={{ name: "VoteLens" }}
@@ -142,24 +142,24 @@ export default function ElectionHistoryPage() {
           }
         />
 
-        <div className="p-4 sm:p-8 max-w-[1400px] w-full mx-auto space-y-12">
+        <div className="p-3 sm:p-8 max-w-[1400px] w-full mx-auto space-y-8 sm:space-y-12 overflow-x-hidden">
           {/* Hero Header Section */}
-          <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
+          <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end overflow-hidden">
             <div className="lg:col-span-8 space-y-4">
               <span className="inline-flex items-center px-3 py-1 bg-secondary-container text-on-secondary-fixed-variant text-[10px] font-bold rounded-md uppercase tracking-wider">
                 Historical Data Repository
               </span>
-              <h1 className="text-4xl sm:text-6xl font-black text-on-background leading-tight tracking-tighter font-display">
-                Tracing the Path of <br />
+              <h1 className="text-2xl sm:text-6xl font-black text-on-background leading-tight tracking-tighter font-display break-words">
+                Tracing the Path of <br className="hidden sm:block" />
                 <span className="text-primary italic">Democratic Resilience.</span>
               </h1>
-              <p className="text-on-surface-variant text-base sm:text-lg max-w-2xl leading-relaxed">
+              <p className="text-on-surface-variant text-sm sm:text-lg max-w-2xl leading-relaxed">
                 Explore Nigeria&apos;s electoral journey from 1999 to the present.
                 Comprehensive data visualization of results, turnout trends, and
                 historical milestones.
               </p>
             </div>
-            <div className="lg:col-span-4 flex justify-end">
+            <div className="lg:col-span-4 flex justify-start lg:justify-end">
               <div className="bg-surface-container-lowest p-6 rounded-xl shadow-civilized border border-outline-variant/10 w-full max-w-xs text-center space-y-2">
                 <span className="text-4xl font-black text-primary font-display">
                   24+
@@ -174,37 +174,41 @@ export default function ElectionHistoryPage() {
 
           {/* Filters and Tabs */}
           <section className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <div className="flex bg-surface-container-low p-1 rounded-xl w-full md:w-auto overflow-x-auto">
-              <button className="px-6 py-2 bg-surface-container-lowest text-primary font-bold rounded-lg shadow-sm text-xs whitespace-nowrap">
-                All Elections
-              </button>
-              <button className="px-6 py-2 text-on-surface-variant hover:text-primary font-medium text-xs transition-colors whitespace-nowrap">
-                Presidential
-              </button>
-              <button className="px-6 py-2 text-on-surface-variant hover:text-primary font-medium text-xs transition-colors whitespace-nowrap">
-                Gubernatorial
-              </button>
-              <button className="px-6 py-2 text-on-surface-variant hover:text-primary font-medium text-xs transition-colors whitespace-nowrap">
-                Legislative
-              </button>
+            <div className="flex bg-surface-container-low p-1 rounded-xl w-full md:w-auto overflow-x-auto no-scrollbar scroll-smooth">
+              <div className="flex min-w-max md:min-w-0">
+                <button className="px-4 sm:px-6 py-2 bg-surface-container-lowest text-primary font-bold rounded-lg shadow-sm text-xs whitespace-nowrap">
+                  All Elections
+                </button>
+                <button className="px-4 sm:px-6 py-2 text-on-surface-variant hover:text-primary font-medium text-xs transition-colors whitespace-nowrap">
+                  Presidential
+                </button>
+                <button className="px-4 sm:px-6 py-2 text-on-surface-variant hover:text-primary font-medium text-xs transition-colors whitespace-nowrap">
+                  Gubernatorial
+                </button>
+                <button className="px-4 sm:px-6 py-2 text-on-surface-variant hover:text-primary font-medium text-xs transition-colors whitespace-nowrap">
+                  Legislative
+                </button>
+              </div>
             </div>
-            <div className="flex items-center gap-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
-              <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest shrink-0">
-                Filter Year:
-              </span>
-              <div className="flex gap-2">
-                <button className="px-4 py-1.5 border-2 border-primary text-primary font-bold rounded-full text-[10px] uppercase tracking-wider">
-                  2023
-                </button>
-                <button className="px-4 py-1.5 border-2 border-transparent bg-surface-container-high text-on-surface-variant font-bold rounded-full text-[10px] uppercase tracking-wider hover:border-outline-variant transition-all">
-                  2019
-                </button>
-                <button className="px-4 py-1.5 border-2 border-transparent bg-surface-container-high text-on-surface-variant font-bold rounded-full text-[10px] uppercase tracking-wider hover:border-outline-variant transition-all">
-                  2015
-                </button>
-                <button className="px-4 py-1.5 border-2 border-transparent bg-surface-container-high text-on-surface-variant font-bold rounded-full text-[10px] uppercase tracking-wider hover:border-outline-variant transition-all">
-                  Archive
-                </button>
+            <div className="flex items-center gap-3 w-full md:w-auto overflow-x-auto no-scrollbar pb-2 md:pb-0">
+              <div className="flex items-center gap-3 min-w-max md:min-w-0">
+                <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest shrink-0">
+                  Filter Year:
+                </span>
+                <div className="flex gap-2">
+                  <button className="px-4 py-1.5 border-2 border-primary text-primary font-bold rounded-full text-[10px] uppercase tracking-wider whitespace-nowrap">
+                    2023
+                  </button>
+                  <button className="px-4 py-1.5 border-2 border-transparent bg-surface-container-high text-on-surface-variant font-bold rounded-full text-[10px] uppercase tracking-wider hover:border-outline-variant transition-all whitespace-nowrap">
+                    2019
+                  </button>
+                  <button className="px-4 py-1.5 border-2 border-transparent bg-surface-container-high text-on-surface-variant font-bold rounded-full text-[10px] uppercase tracking-wider hover:border-outline-variant transition-all whitespace-nowrap">
+                    2015
+                  </button>
+                  <button className="px-4 py-1.5 border-2 border-transparent bg-surface-container-high text-on-surface-variant font-bold rounded-full text-[10px] uppercase tracking-wider hover:border-outline-variant transition-all whitespace-nowrap">
+                    Archive
+                  </button>
+                </div>
               </div>
             </div>
           </section>
@@ -231,8 +235,8 @@ export default function ElectionHistoryPage() {
                   </h3>
                 </div>
               </div>
-              <div className="md:w-1/2 p-8 space-y-6 flex flex-col justify-center">
-                <div className="grid grid-cols-2 gap-6">
+              <div className="md:w-1/2 p-6 sm:p-8 space-y-6 flex flex-col justify-center">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
                       Winner
@@ -329,11 +333,11 @@ export default function ElectionHistoryPage() {
               </div>
               <div className="relative px-4">
                 {/* Vertical Line */}
-                <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-outline-variant/30 to-surface transform -translate-x-1/2"></div>
+                <div className="absolute left-8 sm:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-outline-variant/30 to-surface sm:transform sm:-translate-x-1/2"></div>
                 <div className="space-y-16">
                   {/* 2015 Point */}
-                  <div className="relative flex items-center justify-between group">
-                    <div className="w-[45%] text-right pr-4 sm:pr-8 space-y-2">
+                  <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between group pl-12 sm:pl-0">
+                    <div className="sm:w-[45%] text-left sm:text-right sm:pr-8 space-y-2 mb-4 sm:mb-0">
                       <h4 className="text-lg sm:text-xl font-black text-primary font-display">
                         2015 Transition
                       </h4>
@@ -342,9 +346,9 @@ export default function ElectionHistoryPage() {
                         Nigeria&apos;s history.
                       </p>
                     </div>
-                    <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-primary ring-8 ring-primary/10 z-10"></div>
-                    <div className="w-[45%] pl-4 sm:pl-8">
-                      <div className="relative h-24 sm:h-32 w-full overflow-hidden rounded-xl">
+                    <div className="absolute left-8 sm:left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-primary ring-8 ring-primary/10 z-10 top-2 sm:top-auto"></div>
+                    <div className="sm:w-[45%] sm:pl-8 w-full">
+                      <div className="relative h-40 sm:h-32 w-full overflow-hidden rounded-xl">
                         <Image
                           alt="Historic handshake"
                           className="h-full w-full object-cover grayscale hover:grayscale-0 transition-all duration-500 shadow-sm"
@@ -356,8 +360,8 @@ export default function ElectionHistoryPage() {
                     </div>
                   </div>
                   {/* 2011 Point */}
-                  <div className="relative flex items-center justify-between flex-row-reverse group">
-                    <div className="w-[45%] text-left pl-4 sm:pl-8 space-y-2">
+                  <div className="relative flex flex-col sm:flex-row-reverse items-start sm:items-center justify-between group pl-12 sm:pl-0">
+                    <div className="sm:w-[45%] text-left sm:pl-8 space-y-2 mb-4 sm:mb-0">
                       <h4 className="text-lg sm:text-xl font-black text-on-background font-display">
                         2011 Reforms
                       </h4>
@@ -365,18 +369,18 @@ export default function ElectionHistoryPage() {
                         Introduction of biometric registration systems.
                       </p>
                     </div>
-                    <div className="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-on-surface-variant ring-4 ring-on-surface-variant/10 z-10"></div>
-                    <div className="w-[45%] pr-4 sm:pr-8">
+                    <div className="absolute left-8 sm:left-1/2 transform -translate-x-1/2 w-4 h-4 rounded-full bg-on-surface-variant ring-4 ring-on-surface-variant/10 z-10 top-2 sm:top-auto"></div>
+                    <div className="sm:w-[45%] sm:pr-8 w-full">
                       <div className="w-full h-24 sm:h-32 bg-surface-container-high rounded-xl border-2 border-dashed border-outline-variant flex items-center justify-center p-4 text-center">
-                        <p className="text-[8px] sm:text-xs font-bold text-outline uppercase tracking-widest">
+                        <p className="text-[10px] sm:text-xs font-bold text-outline uppercase tracking-widest">
                           Biometric Era Begins
                         </p>
                       </div>
                     </div>
                   </div>
                   {/* 1999 Point */}
-                  <div className="relative flex items-center justify-between group">
-                    <div className="w-[45%] text-right pr-4 sm:pr-8 space-y-2">
+                  <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between group pl-12 sm:pl-0">
+                    <div className="sm:w-[45%] text-left sm:text-right sm:pr-8 space-y-2 mb-4 sm:mb-0">
                       <h4 className="text-lg sm:text-xl font-black text-on-background font-display">
                         1999 Fourth Republic
                       </h4>
@@ -384,11 +388,11 @@ export default function ElectionHistoryPage() {
                         Return to civilian rule after military governance.
                       </p>
                     </div>
-                    <div className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full bg-primary-container ring-8 ring-primary-container/10 z-10 flex items-center justify-center shadow-lg">
+                    <div className="absolute left-8 sm:left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full bg-primary-container ring-8 ring-primary-container/10 z-10 flex items-center justify-center shadow-lg top-1 sm:top-auto">
                       <Star className="text-white h-3 w-3 fill-white" />
                     </div>
-                    <div className="w-[45%] pl-4 sm:pl-8">
-                      <div className="aspect-square w-12 sm:w-16 bg-primary text-white flex items-center justify-center rounded-xl font-black text-xl sm:text-2xl rotate-3 group-hover:rotate-0 transition-transform font-display">
+                    <div className="sm:w-[45%] sm:pl-8 w-full">
+                      <div className="aspect-square w-16 bg-primary text-white flex items-center justify-center rounded-xl font-black text-xl sm:text-2xl rotate-3 group-hover:rotate-0 transition-transform font-display">
                         99
                       </div>
                     </div>
