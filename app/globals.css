@@ -1,26 +1,229 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --surface: #f8f9fa;
+  --surface-container: #edeeef;
+  --surface-container-low: #f2f4f2;
+  --surface-container-lowest: #ffffff;
+  --surface-container-high: #e7e8e9;
+  --surface-tint: #006d40;
+  --primary: #006b3f;
+  --primary-fixed: #8df8b7;
+  --primary-container: #008751;
+  --on-primary: #f5fff8;
+  --secondary: #5c7865;
+  --secondary-container: #ccead6;
+  --secondary-fixed-dim: #7ba38a;
+  --tertiary: #288731;
+  --tertiary-container: #288731;
+  --on-tertiary-fixed: #002204;
+  --on-tertiary-container: #fefff8;
+  --on-surface: #191c1d;
+  --on-background: #191c1d;
+  --on-surface-variant: #3e4a41;
+  --on-secondary-fixed-variant: #324c3e;
+  --outline-variant: rgb(189 202 190 / 0.15);
+  --civilized-shadow: 0 12px 32px rgb(0 33 16 / 0.06);
+  --glass-shadow: 0 18px 36px rgb(0 33 16 / 0.08);
+  --primary-gradient: linear-gradient(135deg, #006b3f 0%, #008751 100%);
+  --background: var(--surface);
+  --foreground: var(--on-surface);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-surface: var(--surface);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-tint: var(--surface-tint);
+  --color-primary: var(--primary);
+  --color-primary-fixed: var(--primary-fixed);
+  --color-primary-container: var(--primary-container);
+  --color-on-primary: var(--on-primary);
+  --color-secondary: var(--secondary);
+  --color-secondary-container: var(--secondary-container);
+  --color-secondary-fixed-dim: var(--secondary-fixed-dim);
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-container: var(--tertiary-container);
+  --color-on-tertiary-fixed: var(--on-tertiary-fixed);
+  --color-on-tertiary-container: var(--on-tertiary-container);
+  --color-on-surface: var(--on-surface);
+  --color-on-background: var(--on-background);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-on-secondary-fixed-variant: var(--on-secondary-fixed-variant);
+  --color-outline-variant: var(--outline-variant);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-public-sans);
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --shadow-civilized: var(--civilized-shadow);
+  --shadow-glass: var(--glass-shadow);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--surface);
+  color: var(--on-surface);
 }
 
 body {
+  min-height: 100vh;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+  background-image:
+    linear-gradient(180deg, rgb(0 109 64 / 0.04), transparent 20%),
+    radial-gradient(circle at top left, rgb(0 109 64 / 0.03), transparent 36%);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: rgb(0 109 64 / 0.14);
+}
+
+.font-display {
+  font-family: var(--font-public-sans), Arial, Helvetica, sans-serif;
+}
+
+.glass-panel {
+  background: rgb(255 255 255 / 0.8);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--glass-shadow);
+}
+
+.dashboard-card {
+  background: var(--surface-container-lowest);
+  border-radius: 1.5rem;
+}
+
+.primary-button {
+  background: var(--primary-gradient);
+  color: var(--on-primary);
+  border-radius: 9999px;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.1),
+    0 12px 24px rgb(0 33 16 / 0.12);
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease,
+    filter 150ms ease;
+}
+
+.primary-button:hover {
+  filter: brightness(1.02);
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.12),
+    0 16px 28px rgb(0 33 16 / 0.16);
+}
+
+.ghost-button {
+  background: var(--surface-container-lowest);
+  color: var(--primary);
+  border-radius: 9999px;
+  box-shadow: inset 0 0 0 1px rgb(189 202 190 / 0.3);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.badge-verified {
+  background: var(--tertiary-container);
+  color: var(--on-tertiary-fixed);
+}
+
+.badge-pending {
+  background: var(--secondary-container);
+  color: #324c3e;
+}
+
+.field-label {
+  display: inline-block;
+  margin-bottom: 0.25rem;
+  color: var(--on-surface-variant);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.civic-input {
+  width: 100%;
+  border: 0;
+  border-radius: 0.75rem;
+  background: var(--surface-container-low);
+  color: var(--on-surface);
+  padding: 0.95rem 1rem;
+  outline: 2px solid transparent;
+  transition:
+    background-color 150ms ease,
+    outline-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.civic-input:focus {
+  background: var(--surface-container-lowest);
+  outline-color: var(--primary);
+  box-shadow: 0 0 0 6px rgb(0 109 64 / 0.08);
+}
+
+.editorial-kicker {
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.metric-label {
+  color: var(--on-surface-variant);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.metric-value {
+  font-family: var(--font-public-sans), Arial, Helvetica, sans-serif;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+
+.chart-grid {
+  background-image:
+    linear-gradient(to right, transparent 0, transparent calc(100% - 1px), rgb(189 202 190 / 0.1) calc(100% - 1px)),
+    linear-gradient(to top, transparent 0, transparent calc(100% - 1px), rgb(189 202 190 / 0.1) calc(100% - 1px));
+  background-size: 25% 100%, 100% 25%;
+}
+
+.surface-recessed {
+  background: var(--surface-container-high);
 }
